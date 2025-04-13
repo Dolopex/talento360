@@ -1,0 +1,116 @@
+{% extends "dashboard/header.html" %}
+
+{% block title %} Registro de Usuario {% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #f0f0f0;
+        z-index: -1;  /* Reducido para que el contenido se muestre encima */
+    }
+    
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-top: 50px;
+        z-index: -1;
+    }
+    
+    
+    .subcontainer {
+        position: relative;
+        width:  790px;
+        height: 100px;
+        background-color: rgba(0, 204, 255, 1);
+        padding: 8px;
+        border-radius: 0px;
+        
+    }
+    
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        margin-top: 100px;
+    }
+    
+    h3 {
+        text-align: center;
+        margin-top: -15px;
+        color: rgba(0, 204, 255, 1);
+    }
+    
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+    
+    img {
+        width: 40%;
+        margin-top: 2%;
+        margin: auto;
+    }
+    
+    button[type="submit"] {
+        font-family: Arial, sans-serif;
+        background-color: rgba(0, 204, 255, 1); /* Color de fondo */
+        border: none; /* Sin borde */
+        color: white; /* Color del texto */
+        padding: 12px 24px; /* Espaciado interno */
+        text-align: center; /* Alineación del texto */
+        text-decoration: none; /* Sin decoración de texto */
+        display: inline-block; /* Mostrar como bloque en línea */
+        font-size: 16px; /* Tamaño de fuente */
+        margin: 4px 2px; /* Margen exterior */
+        cursor: pointer; /* Cursor al pasar sobre él */
+        border-radius: 8px; /* Radio del borde */
+        text-decoration: none;
+        margin-top: 20px;
+    }
+    
+    button[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<div class="container">
+    <h2>Registro de Usuario</h2>
+    <h3>ALSI</h3>
+        <form method="post" action="{% url 'registro_usuario' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Registrar</button>
+        </form>
+        
+</div>
+{% endblock %}

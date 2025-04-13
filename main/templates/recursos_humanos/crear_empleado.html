@@ -1,0 +1,352 @@
+{% extends "dashboard/header.html" %}
+
+{% load static %}
+
+
+{% block title %} Crear Empleado {% endblock %}
+
+{% block content %}
+<style>
+    /* Aquí van los estilos CSS */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+
+    .container {
+        margin-top: -50px;
+        max-width: 1300px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .form-group {
+        flex: 1 0 calc(33.33% - 20px); /* Ancho de cada columna */
+        margin-bottom: 10px; /* Espacio entre elementos */
+        box-sizing: border-box; /* Considerar el borde y el relleno en el cálculo del ancho */
+        padding-right: 10px; /* Espacio entre columnas */
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    h2 {
+        margin-top: 100px;
+        margin-bottom: -40px;
+        margin-left: 20px;
+        color: rgb(69, 72, 74);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="file"],
+    select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    button[type="submit"] {
+        background-color: #4caf50;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #45a049;
+    }
+    /* Estilos para campos de correo */
+    input[type="email"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif; /* Fuente del texto */
+        font-size: 16px; /* Tamaño del texto */
+    }
+
+    /* Estilos para campos de fecha */
+    input[type="date"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif; /* Fuente del texto */
+        font-size: 16px; /* Tamaño del texto */
+    }
+
+    /* Estilos para campos de números */
+    input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif; /* Fuente del texto */
+        font-size: 16px; /* Tamaño del texto */
+    }
+    
+    /* Estilo para mensaje de error */
+    .error-message {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+    /* Estilo para mensaje de éxito */
+    .success-message {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #d4edda;
+        color: #155724;
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+
+</style>
+</head>
+<body>
+    <h2>Crear Empleado</h2>
+    <div class="container">
+        <h1>Formulario Registro de Empleado</h1>
+        <p>Los campos con * son obligatorios</p>
+        <form action="{% url 'crear_empleado' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="foto">Foto:</label>
+                    <input type="file" id="foto" name="foto">
+                </div>
+                <div class="form-group">
+                    <label for="contrato">Contrato:</label>
+                    <input type="file" id="contrato" name="contrato">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="numero_interno">Número Interno(*):</label>
+                    <input type="text" id="numero_interno" name="numero_interno">
+                </div>
+                <div class="form-group">
+                    <label for="nombres">Nombres(*):</label>
+                    <input type="text" id="nombres" name="nombres">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="apellidos">Apellidos(*):</label>
+                    <input type="text" id="apellidos" name="apellidos">
+                </div>
+                <div class="form-group">
+                    <label for="fecha_nacimiento">Fecha de Nacimiento(*):</label>
+                    <input type="date" id="fecha_nacimiento" name="fecha_nacimiento">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="documento_identidad">Cedula(*):</label>
+                    <input type="text" id="documento_identidad" name="documento_identidad">
+                </div>
+                <div class="form-group">
+                    <label for="domicilio">Domicilio(*):</label>
+                    <input type="text" id="domicilio" name="domicilio">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="correo">Correo Electrónico(*):</label>
+                    <input type="email" id="correo" name="correo">
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono(*):</label>
+                    <input type="text" id="telefono" name="telefono">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="EPS">EPS(*):</label>
+                    <input type="text" id="EPS" name="EPS">
+                </div>
+                <div class="form-group">
+                    <label for="estado_civil">Estado Civil(*):</label>
+                    <input type="text" id="estado_civil" name="estado_civil">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="dependientes_economicos">Dependientes Económicos:</label>
+                    <input type="number" id="dependientes_economicos" name="dependientes_economicos">
+                </div>
+                <div class="form-group">
+                    <label for="cargo">Cargo(*):</label>
+                    <input type="text" id="cargo" name="cargo">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tipo_contrato">Tipo de Contrato(*):</label>
+                    <select id="tipo_contrato" name="tipo_contrato">
+                        <option value="Contrato a Término Fijo">Contrato a Término Fijo</option>
+                        <option value="Contrato a término indefinido">Contrato a término indefinido</option>
+                        <option value="Contrato de Obra o labor">Contrato de Obra o labor</option>
+                        <option value="Contrato civil por prestación de servicios">Contrato civil por prestación de servicios</option>
+                        <option value="Contrato de aprendizaje">Contrato de aprendizaje</option>
+                        <option value="Contrato ocasional, accidental o transitorio de trabajo">Contrato ocasional, accidental o transitorio de trabajo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="talla_ropa">Talla de Ropa(*):</label>
+                    <input type="text" id="talla_ropa" name="talla_ropa">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="talla_calzado">Talla de Calzado(*):</label>
+                    <input type="number" style="max-width: 150px;" id="talla_calzado" name="talla_calzado">
+                </div>
+            </div>
+            <hr>
+            <h1>Datos academicos</h1>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="formacion_reglada">Formación Reglada(*):</label>
+                    <input type="text" style="max-width: 700px;" id="formacion_reglada" name="formacion_reglada">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="formacion_complementaria">Formación Complementaria(*):</label>
+                    <input type="text" id="formacion_complementaria" name="formacion_complementaria">
+                </div>
+                <div class="form-group">
+                    <label for="institucion_graduacion">Institución de Graduación(*):</label>
+                    <input type="text" id="institucion_graduacion" name="institucion_graduacion">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="experiencias_previas">Experiencias Previas:</label>
+                    <textarea id="experiencias_previas" name="experiencias_previas"></textarea>
+                </div>
+            </div>
+            <hr>
+            <h1>Contacto de emergencia</h1>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="relacion_empleado">Relación con el Empleado(*):</label>
+                    <input type="text" id="relacion_empleado" name="relacion_empleado">
+                </div>
+                <div class="form-group">
+                    <label for="contacto_nombres">Nombres de Contacto de Emergencia(*):</label>
+                    <input type="text" id="contacto_nombres" name="contacto_nombres">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="contacto_apellidos">Apellidos de Contacto de Emergencia(*):</label>
+                    <input type="text" id="contacto_apellidos" name="contacto_apellidos">
+                </div>
+                <div class="form-group">
+                    <label for="contacto_fecha_nacimiento">Fecha de Nacimiento de Contacto de Emergencia(*):</label>
+                    <input type="date" id="contacto_fecha_nacimiento" name="contacto_fecha_nacimiento">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="contacto_carnet_identidad"> Cédula de Contacto de Emergencia(*):</label>
+                    <input type="text" id="contacto_carnet_identidad" name="contacto_carnet_identidad">
+                </div>
+                <div class="form-group">
+                    <label for="contacto_domicilio">Domicilio de Contacto de Emergencia(*):</label>
+                    <input type="text" id="contacto_domicilio" name="contacto_domicilio">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="contacto_telefono">Teléfono de Contacto de Emergencia(*):</label>
+                    <input type="text" id="contacto_telefono" name="contacto_telefono">
+                </div>
+                <div class="form-group">
+                    <label for="contacto_correo">Correo de Contacto de Emergencia(*):</label>
+                    <input type="email" id="contacto_correo" name="contacto_correo">
+                </div>
+            </div>
+            <hr>
+            <h1>Datos bancarios</h1>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="banco">Banco(*):</label>
+                    <input type="text" id="banco" name="banco">
+                </div>
+                <div class="form-group">
+                    <label for="tipo_cuenta">Tipo de Cuenta Bancaria(*):</label>
+                    <select id="tipo_cuenta" name="tipo_cuenta">
+                        <option value="Ahorros">Ahorros</option>
+                        <option value="Corriente">Corriente</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="numero_cuenta">Número de Cuenta Bancaria(*):</label>
+                    <input type="text" style="max-width: 300px;" id="numero_cuenta" name="numero_cuenta">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <button type="submit">Registrar Empleado</button>
+                </div>
+            </div>
+            
+        </form>
+        
+    </div>
+    {% if form.errors %}
+        <div class="error-message">
+            <strong>Error:</strong> Has dejado campos obligatorios sin llenar (*).
+        </div>
+    {% endif %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="success-message">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error de Permiso</title>
+    <style>
+        a {
+            text-decoration: none; /* Elimina la decoración del enlace */
+        }
+        a:visited {
+            color: white;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .error-container {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: rgba(0, 204, 255, 1);
+        }
+
+        p {
+            color: #555;
+        }
+        button {
+            font-family: Arial, sans-serif;
+            background-color: rgba(0, 204, 255, 1); /* Color de fondo */
+            border: none; /* Sin borde */
+            color: white; /* Color del texto */
+            padding: 12px 24px; /* Espaciado interno */
+            text-align: center; /* Alineación del texto */
+            text-decoration: none; /* Sin decoración de texto */
+            display: inline-block; /* Mostrar como bloque en línea */
+            font-size: 16px; /* Tamaño de fuente */
+            margin: 4px 2px; /* Margen exterior */
+            cursor: pointer; /* Cursor al pasar sobre él */
+            border-radius: 8px; /* Radio del borde */
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1>Error</h1>
+        <p>No tienes los permisos necesarios para acceder a esta sección.</p>
+        <button onclick="window.location.href='/dashboard/'">Volver</button>
+    </div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuarios</title>
+    <style>
+        /* Estilos CSS */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .user-card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        .user-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .user-details {
+            flex-grow: 1;
+        }
+        .user-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .user-email {
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .user-phone {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% for usuario in usuarios %}
+            <div class="user-card">
+                <div class="user-info">
+                    {% if usuario.imagen %}
+                        <img src="{{ usuario.imagen.url }}" alt="Imagen de perfil">
+                    {% else %}
+                        <div class="default-profile-image"></div>
+                    {% endif %}
+                    <div class="user-details">
+                        <h2 class="user-name">{{ usuario.nombres }} {{ usuario.apellidos }}</h2>
+                        <p class="user-email">{{ usuario.email }}</p>
+                        <p class="user-phone">{{ usuario.celular }}</p>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>No hay usuarios registrados.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

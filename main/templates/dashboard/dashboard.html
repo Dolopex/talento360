@@ -1,0 +1,303 @@
+{% extends "dashboard/header.html" %}
+
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'CSS/dashboard.css' %}" />
+
+{% block title %} Panel de control {% endblock%}
+
+{% block content%}
+
+
+    
+<style>
+    body {
+        font-family: sans-serif;
+    }
+
+    .container {
+        margin-top: 500px;
+        max-width: 1300px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap
+    }
+    hr {
+        margin-top: 70px;
+    }
+
+    .carrusel-container {
+    position: relative;
+    width: 800px;
+    aspect-ratio: 2 / 1;
+    margin: left;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .carrusel {
+    width: 100%;
+    height: 100%;
+    position: left;
+    }
+
+    .slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    }
+
+    .slide.active {
+    opacity: 1;
+    }
+
+    .carrusel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0,0,0,0.3);
+    color: white;
+    border: none;
+    font-size: 24px;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 1;
+    user-select: none;
+    }
+
+    .carrusel-btn.prev {
+    left: 10px;
+    }
+
+    .carrusel-btn.next {
+    right: 10px;
+    }
+    .dashboard-widgets {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .widget {
+    flex: 1;
+    min-width: 160px;
+    background-color: #f4f4f4;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    transition: 0.3s ease;
+  }
+
+  .widget:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+
+  .widget-icon {
+    font-size: 1.8rem;
+    margin-right: 0.8rem;
+  }
+
+  .widget-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .widget-title {
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  .widget-value {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #222;
+  }
+
+  
+  .accesos-directos {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 500px;
+    margin: 2rem auto;
+    align-items: flex-end; /* Alinea los items a la derecha */
+    margin-left: 950px;
+    margin-bottom: -400px;
+    height: 400px;
+}
+
+.acceso {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    color: #333;
+    height: 20%;
+    width: 120%;
+    justify-content: flex-end;
+    
+}
+
+.acceso:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+}
+
+.icono {
+    font-size: 2rem;
+    margin-left: auto;
+    margin: left;
+}
+
+.texto {
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-align: left;
+    color: white;
+}
+
+/* Botones con colores personalizados */
+.acceso.gestion-empleados {
+    background-color: #3498db; /* Azul */
+}
+
+.acceso.registrar-asistencia {
+    background-color: #2ecc71; /* Verde */
+}
+
+.acceso.solicitudes {
+    
+    background-color: #9b59b6; /* Morado */
+}
+
+.acceso.calendario {
+    
+    background-color: #e67e22; /* Naranja */
+}
+
+
+</style>
+
+<body>
+    <hr>
+    <div class="container">
+        <h2 class="saludo">¡Hola {{ user.nombres }}!</h2>
+        <div class="dashboard-widgets">
+            <div class="widget">
+              <div class="widget-icon">📋</div>
+              <div class="widget-content">
+                <div class="widget-title">Empleados Activos</div>
+                <div class="widget-value">{{ total_empleados }}</div>
+              </div>
+            </div>
+            <div class="widget">
+              <div class="widget-icon">🕒</div>
+              <div class="widget-content">
+                <div class="widget-title">Asistencias Hoy</div>
+                <div class="widget-value">{{ asistencias_hoy }}</div>
+              </div>
+            </div>
+            <div class="widget">
+              <div class="widget-icon">🧾</div>
+              <div class="widget-content">
+                <div class="widget-title">Vacaciones Pendientes</div>
+                <div class="widget-value">{{ vacaciones_pendientes }}</div>
+              </div>
+            </div>
+            <div class="widget">
+              <div class="widget-icon">📅</div>
+              <div class="widget-content">
+                <div class="widget-title">Entrevistas</div>
+                <div class="widget-value">{{ entrevistas_programadas }}</div>
+              </div>
+            </div>
+            <div class="widget">
+              <div class="widget-icon">📝</div>
+              <div class="widget-content">
+                <div class="widget-title">Permisos Activos</div>
+                <div class="widget-value">{{ solicitudes_pendientes }}</div>
+              </div>
+            </div>
+          </div>
+        
+          <div class="accesos-directos">
+            <a href="{% url 'empleados' %}" class="acceso gestion-empleados">
+                <span class="icono">📁</span>
+                <span class="texto">Gestión de Empleados</span>
+            </a>
+            <a href="{% url 'registrar_asistencia' %}" class="acceso registrar-asistencia">
+                <span class="icono">📋</span>
+                <span class="texto">Registrar Asistencia</span>
+            </a>
+            <a href="{% url 'solicitudes' %}" class="acceso solicitudes">
+                <span class="icono">📤</span>
+                <span class="texto">Solicitudes</span>
+            </a>
+            <a href="{% url 'calendario' %}" class="acceso calendario">
+                <span class="icono">🗓️</span>
+                <span class="texto">Calendario de Actividades</span>
+            </a>
+        </div>
+        
+          
+    <div class="carrusel-container">
+            <div class="carrusel" id="carrusel">
+              <img src="{% static 'images/img1.jpg' %}" class="slide active">
+              <img src="{% static 'images/img2.jpg' %}" class="slide">
+              <img src="{% static 'images/img3.jpg' %}" class="slide">
+            </div>
+            <button onclick="moverCarrusel(-1)" class="carrusel-btn prev">&#10094;</button>
+            <button onclick="moverCarrusel(1)" class="carrusel-btn next">&#10095;</button>
+          </div>
+    </div>
+   
+      
+</body>
+
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    
+    function mostrarSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active');
+        if (i === index) {
+          slide.classList.add('active');
+        }
+      });
+    }
+    
+    function moverCarrusel(direccion) {
+      currentSlide += direccion;
+      if (currentSlide < 0) currentSlide = slides.length - 1;
+      if (currentSlide >= slides.length) currentSlide = 0;
+      mostrarSlide(currentSlide);
+    }
+    
+    // Opcional: auto carrusel
+    setInterval(() => {
+      moverCarrusel(1);
+    }, 8000);
+    </script>
+    
+
+{% endblock %}

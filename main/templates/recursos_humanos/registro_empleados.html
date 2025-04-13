@@ -1,0 +1,1064 @@
+{% extends "dashboard/header.html" %}
+
+{% load static %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-REfMk2ztZH1VWg9aPQ8h/a5gJjzghhU5k+ef7gjDmUqOaZ/8za1yz0kCZa7NrJ1h" crossorigin="anonymous">
+
+
+{% block title %} Registro Empleados {% endblock %}
+
+{% block content %}
+<style>
+
+    a:link {
+        color: #ffff; /* Color predeterminado para los enlaces no visitados */
+      }
+      
+      a:visited {
+        color: #ffff; /* Color para los enlaces visitados, puede ser el mismo que el color predeterminado */
+      }
+      
+      a:hover {
+        color: #007ACC; /* Color al pasar el ratón sobre el enlace */
+      }
+      
+      a:active {
+        color: #007ACC; /* Color al hacer clic en el enlace */
+      }
+      
+
+    body {
+        font-family: sans-serif;
+    }
+
+    .container {
+        margin-top: 50px;
+        max-width: 1300px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .projects {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 20px;
+        
+    }
+
+    .project {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px;
+        flex-basis: calc(100% - 20px); /* Calcula el ancho de cada proyecto */
+        box-sizing: border-box;
+        background-color: rgba(148, 148, 148, 0.05);
+    }
+
+    .project-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Columnas de dos */
+        gap: -20px;
+    }
+
+    h2 {
+        margin-top: 100px;
+        margin-bottom: -20px;
+        margin-left: 20px;
+        color: rgb(69, 72, 74);
+    }
+
+    .proyectos {
+        color: black;
+        text-decoration: none;
+        margin-top: 10px;
+        margin-right: 35px;
+        margin-bottom: 20px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    .select-container {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+
+    .label-text {
+        margin-right: 10px; /* Espaciado a la derecha */
+    }
+
+    /* Estilos para el icono */
+    .label-text i {
+        margin-right: 5px; /* Espaciado a la derecha */
+    }
+    
+    .select-box {
+        padding: 8px 12px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        cursor: pointer; /* Cursor al pasar el ratón */
+        transition: border-color 0.3s; /* Transición suave del borde */
+    }
+    
+    /* Estilos para el select al pasar el ratón */
+    .select-box:hover {
+        border-color: #999; /* Cambia el color del borde al pasar el ratón */
+    }
+    .search-form {
+        margin-bottom: 20px;
+    }
+    
+    .form {
+        display: flex;
+        align-items: center;
+    }
+    
+    .input-field {
+        padding: 8px;
+        margin-right: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+    
+    .submit-button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    
+    .clear-button {
+        padding: 8px 16px;
+        border-radius: 5px;
+        background-color: #dc3545; /* Color de fondo rojo */
+        color: #ffff; /* Color del texto blanco */
+        font-size: 16px;
+        text-decoration: none;
+        margin-left: 10px; /* Ajuste el margen izquierdo */
+        cursor: pointer; /* Cursor al pasar el ratón */
+        transition: background-color 0.3s; /* Transición suave del color de fondo */
+    }
+
+    .clear-button:hover {
+        background-color: #c82333; /* Cambia el color de fondo al pasar el ratón */
+    }
+
+        /* Estilos para el botón de filtro */
+    .filter-toggle-button {
+        background-color: rgb(0, 174, 255); /* Color de fondo */
+        color: white; /* Color del texto */
+        padding: 10px 20px; /* Espaciado interno */
+        border: none; /* Borde */
+        border-radius: 5px; /* Borde redondeado */
+        cursor: pointer; /* Cursor al pasar el ratón */
+        transition: background-color 0.3s; /* Transición suave del color de fondo */
+        margin-left: 10px;
+    }
+
+    /* Estilos para el botón de filtro al pasar el ratón */
+    .filter-toggle-button:hover {
+        background-color: #007ACC; /* Cambia el color de fondo al pasar el ratón */
+    }
+
+    /* Estilos para el icono dentro del botón */
+    .filter-toggle-button i {
+        margin-right: 5px; /* Espacio entre el icono y el texto */
+    }
+
+    .button {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background-color: rgb(20, 20, 20);
+        border: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
+        cursor: pointer;
+        transition-duration: .3s;
+        overflow: hidden;
+        position: relative;
+        float: right;
+      }
+      
+      .svgIcon {
+        width: 12px;
+        transition-duration: .3s;
+      }
+      
+      .svgIcon path {
+        fill: white;
+      }
+      
+      .button:hover {
+        width: 140px;
+        border-radius: 50px;
+        transition-duration: .3s;
+        background-color: rgb(255, 69, 69);
+        align-items: center;
+      }
+      
+      .button:hover .svgIcon {
+        width: 50px;
+        transition-duration: .3s;
+        transform: translateY(60%);
+      }
+      
+      .button::before {
+        position: absolute;
+        top: -20px;
+        content: "Borrar Proyecto";
+        color: white;
+        transition-duration: .3s;
+        font-size: 2px;
+      }
+      
+      .button:hover::before {
+        font-size: 13px;
+        opacity: 1;
+        transform: translateY(30px);
+        transition-duration: .3s;
+      }
+
+    /* Estilos para la ventana emergente */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+        
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 5px;
+        position: relative;
+        
+    }
+
+    .modal-content .field {
+        width: 50%; /* Ancho de cada columna */
+        display: flex;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .field {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    input[type="file"],
+    input[type="text"],
+    input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .confirmar-btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        float: right;
+    }
+
+    .confirmar-btn:hover {
+        background-color: #45a049;
+    }
+
+    /* Estilos personalizados para los campos de selección */
+    select {
+        width: 100%;
+        padding: 8px; /* Ajusta el relleno según sea necesario */
+        font-size: 16px; /* Ajusta el tamaño de la fuente según sea necesario */
+        border: 1px solid #ccc; /* Añade un borde para mayor claridad */
+        border-radius: 4px; /* Añade bordes redondeados */
+        box-sizing: border-box; /* Ajusta el tamaño total del elemento incluyendo el borde y el relleno */
+    }
+
+    /* Opcional: Estilos para resaltar el campo activo */
+    select:focus {
+        outline: none; /* Elimina el resaltado al hacer foco */
+        border-color: #007bff; /* Cambia el color del borde al hacer foco */
+    }
+
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .buttons-container button {
+        background-color: rgba(0, 204, 255, 1); /* Color de fondo verde */
+        border: none; /* Sin borde */
+        color: white; /* Texto blanco */
+        padding: 10px 32px; /* Espaciado interno */
+        text-align: center; /* Alineación del texto */
+        text-decoration: none; /* Sin subrayado */
+        display: inline-block; /* Mostrar como bloque en línea */
+        font-size: 16px; /* Tamaño de la fuente */
+        margin: 4px 2px; /* Margen */
+        cursor: pointer; /* Cursor apuntador */
+        border-radius: 8px; /* Bordes redondeados */
+    }
+
+
+      .orange-text {
+        color: orange;
+    }
+    
+    .green-text {
+        color: green;
+    }
+    
+    .yellow-text {
+        color: yellow;
+    }
+    
+    .red-text {
+        color: red;
+    }
+    
+    .blue-text {
+        color: blue;
+    }
+
+    .field {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .cards-container {
+        display: flex; /* Hace que los elementos se muestren en línea */
+        flex-wrap: wrap; /* Permite que los elementos se envuelvan a la siguiente línea si no hay suficiente espacio */
+    }
+    
+    .card {
+        width: 190px;
+        height: 254px;
+        background: rgba(65, 65, 65, 0.11);
+        padding: 2rem 1.5rem;
+        transition: box-shadow .3s ease, transform .2s ease;
+        margin: 10px;margin: 10px;
+        cursor: pointer;
+       }
+       
+       .card-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: transform .2s ease, opacity .2s ease;
+       }
+       
+       /*Image*/
+       .card-avatar {
+        --size: 60px;
+        background: linear-gradient(to top, #f1e1c1 0%, #fcbc97 100%);
+        width: var(--size);
+        height: var(--size);
+        border-radius: 50%;
+        transition: transform .2s ease;
+        margin-bottom: 1rem;
+       }
+       
+       
+       /*Card footer*/
+       .card-social {
+        transform: translateY(200%);
+        display: flex;
+        justify-content: space-around;
+        margin:auto;
+        width: 100%;
+        opacity: 0;
+        transition: transform .2s ease, opacity .2s ease;
+       }
+       
+       .card-social__item {
+        list-style: none;
+        margin:auto;
+        display: flex; /* Agregar display flex */
+        justify-content: center; /* Centrar horizontalmente */
+        align-items: center; /* Centrar verticalmente */
+        
+
+       }
+       
+       .card-social__item svg {
+        display: block;
+        height: 18px;
+        width: 18px;
+        fill: #515F65;
+        cursor: pointer;
+        transition: fill 0.2s ease ,transform 0.2s ease;
+        margin:auto;
+        
+
+       }
+       
+       /*Text*/
+       .card-title {
+        color: #333;
+        font-size: 1.5em;
+        font-weight: 600;
+        line-height: 2rem;
+        justify-content: center; 
+       }
+       
+       .card-subtitle {
+        color: #859ba8;
+        font-size: 0.8em;
+        text-align: center; /* Centra el texto horizontalmente */
+        display: block; /* Para que el elemento ocupe todo el ancho disponible */
+       }
+       
+       /*Hover*/
+       .card:hover {
+        box-shadow: 0 8px 50px #23232333;
+       }
+       
+       .card:hover .card-info {
+        transform: translateY(-5%);
+       }
+       
+       .card:hover .card-social {
+        transform: translateY(100%);
+        opacity: 1;
+       }
+       
+       .card-social__item svg:hover {
+        fill: #232323;
+        transform: scale(1.1);
+       }
+
+       .card-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-size: cover;
+    }
+       
+       .card-avatar:hover {
+        transform: scale(1.1);
+       }
+      
+    .icons {
+        list-style: none;
+        margin: auto;
+        display: flex; /* Agregar display flex */
+        justify-content: center; /* Centrar horizontalmente */
+        align-items: center; /* Centrar verticalmente */
+        margin-right: 50px;
+    }
+
+    /* Estilos para los campos dentro del modal */
+    .field {
+        margin-bottom: 15px;
+        width: 40%;
+        float: right;
+        margin-top: -3px;
+    }
+
+    .field label {
+        display: block;
+        font-weight: bold;
+    }
+
+    .field p {
+        margin: 0;
+    }
+
+    .columns {
+        margin-top: -300px;
+        margin-left: 280px;
+        margin-bottom: -80px;
+        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); /* Define el tamaño de las columnas */
+        grid-gap: 10px; /* Espacio entre columnas */
+    }
+    
+    .column {
+        flex: 1;
+        margin-right: 1px; /* Ajusta el espacio entre las columnas según sea necesario */
+        width: calc(100% - 10px); /* Establece el ancho de cada columna */
+    }
+
+
+    /* Estilos para separar el apartado de información académica */
+    .separador {
+        margin-top: -50px; /* Puedes ajustar el valor según sea necesario */
+        margin-left: 280px;
+        
+    }
+
+    .informacion-bancaria {
+        margin-top: 50px; /* Puedes ajustar el valor según sea necesario */
+    }
+
+    /* Estilos para separar el apartado de contacto de emergencia */
+    .contacto-emergencia {
+        margin-top: 20px; /* Puedes ajustar el valor según sea necesario */
+    }
+
+    .custum-file-upload {
+        height: 80px;
+        width: 180px;
+        display: flex;
+        flex-direction: column;
+        align-items: space-between;
+        gap: 20px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #cacaca;
+        background-color: rgba(255, 255, 255, 1);
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0px 48px 35px -48px rgba(0,0,0,0.1);
+        margin-top: 20px;
+      }
+      
+      .custum-file-upload .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .custum-file-upload .icon svg {
+        height: 70px;
+        fill: rgba(75, 85, 99, 1);
+        margin-bottom: -40px;
+      }
+      
+      .custum-file-upload .text {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .custum-file-upload .text span {
+        font-weight: 300;
+        color: rgba(75, 85, 99, 1);
+      }
+      
+      .custum-file-upload input {
+        display: none;
+      }
+
+    .filter-container {
+        display: none; /* Oculta el contenedor por defecto */
+        flex-wrap: wrap; /* Permite que los elementos se envuelvan horizontalmente */
+        justify-content: space-between; /* Espaciado uniforme entre los elementos */
+        align-items: center; /* Alinea verticalmente los elementos */
+        animation: scale-up-top 0.1s;
+        width: 100%; /* Ancho del contenedor */
+        margin-top: 10px;
+    }
+    
+    .filter-container.show {
+        display: flex; /* Muestra el contenedor cuando tiene la clase 'show' */
+    }
+    
+    #filter-form {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%; /* Ajusta el ancho del formulario */
+    }
+    
+    #filter-form input,
+    #filter-form button {
+        flex: 1; /* Ajusta el ancho de los elementos dentro del formulario */
+        margin-right: 10px; /* Espaciado entre los elementos */
+        margin-bottom: 10px; /* Espaciado entre las filas */
+    }
+
+    .scale-up-top {
+        animation: scale-up-top 0.1s;
+    }
+    
+    @keyframes scale-up-top {
+        0% {
+            transform: scale(0.1);
+            transform-origin: left top;
+        }
+        100% {
+            transform: scale(1);
+            transform-origin: left top;
+        }
+    }
+
+    .imagen-container {
+        width: 250px; /* Ancho deseado */
+        height: 250px; /* Altura deseada */
+        overflow: hidden; /* Para recortar la imagen que exceda el contenedor */
+    }
+    
+    .imagen-container img {
+        width: 100%; /* Para asegurarse de que la imagen ocupe todo el contenedor */
+        height: 100%; /* Para asegurarse de que la imagen ocupe todo el contenedor */
+        object-fit: cover; /* Escalar la imagen para que ocupe todo el contenedor manteniendo la relación de aspecto y recortando si es necesario */
+    }
+
+    .registro {
+        margin-bottom: -60px;
+        float: right;
+        margin-top: -10px;
+        margin-right: 70px;
+
+        button {
+            border: 2px solid #24b4fb;
+            background-color: #24b4fb;
+            border-radius: 0.9em;
+            padding: 0.8em 1.2em 0.8em 1em;
+            transition: all ease-in-out 0.2s;
+            font-size: 16px;
+            cursor: pointer;
+           }
+           
+           button span {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-weight: 600;
+           }
+           
+           button:hover {
+            background-color: #0071e2;
+           }
+    }
+
+
+    
+    
+</style>
+
+<h2>Administrar Empleados</h2>
+<div class="registro">
+    <a href="{% url 'crear_empleado' %}">
+        <button>
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"></path><path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"></path></svg> Registrar Empleado
+            </span>
+        </button>
+    </a>
+    
+</div>
+<div class="container">
+    <div class="search-form">
+        <button id="filter-toggle" class="filter-toggle-button">
+            <i class="fas fa-filter"></i> Filtrar
+        </button>
+        <div id="filter-container" class="filter-container">
+            <form id="filter-form">
+                <input type="text" name="nombres" placeholder="Nombres">
+                <input type="text" name="apellidos" placeholder="Apellidos">
+                <input type="text" name="cargo" placeholder="Cargo">
+                <input type="text" name="documento_identidad" placeholder="Documento de Identidad">
+                <select style="width: 200px;height:37px; margin-right: 10px"name="tipo_contrato">
+                    <option style="color: grey" value="">Tipo de contrato</option>
+                    <option value="Contrato a Término Fijo">Contrato a Término Fijo</option>
+                    <option value="Contrato a término indefinido">Contrato a término indefinido</option>
+                    <option value="Contrato de Obra o labor">Contrato de Obra o labor</option>
+                    <option value="Contrato civil por prestación de servicios">Contrato civil por prestación de servicios</option>
+                    <option value="Contrato de aprendizaje">Contrato de aprendizaje</option>
+                    <option value="Contrato ocasional, accidental o transitorio de trabajo">Contrato ocasional, accidental o transitorio de trabajo</option>
+                </select>                
+                <input type="text" name="numero_interno" placeholder="Número Interno">
+                <form id="filter-form" method="get">
+                    <!-- Tus campos de filtro -->
+                    <button id="filter-toggle" class="filter-toggle-button" type="submit">Aplicar filtro</button>
+                    <button id="filter-toggle" class="filter-toggle-button" type="submit" name="limpiar" value="true">Limpiar filtro</button>
+                </form>             
+            </form>
+        </div>
+    <div class="cards-container">
+        {% for empleado in empleados %}
+        <div class="card" onclick="abrirModal('{{ empleado.id }}')">
+            <div class="card-info">
+                <div class="card-avatar" style="background-image: url('{{ empleado.foto.url }}')"></div>
+                <div>
+                    <div class="card-title">{{ empleado.nombres }} {{ empleado.apellidos }}</div>
+                    <div class="card-subtitle">{{ empleado.cargo }}</div>
+                </div>
+            </div>
+            <div class="icons">
+                <ul class="card-social">
+                    <li class="card-social__item">
+                        <i class="fa-sharp fa-solid fa-file-contract"></i>
+                    </li>
+                    <li class="card-social__item">
+                        <i class="fa-sharp fa-solid fa-chart-line"></i>
+                    </li>
+                    <li class="card-social__item">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div id="editar-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <form id="editar-formulario-empleado">
+                <div class="container">
+                    <input type="hidden" id="empleado_id" name="empleado.id" value="{{ empleado.id }}">
+                        
+                    <div class="section">
+                        <div class="field_foto">
+                            <label>Foto:</label>
+                            <div class="imagen-container">
+                                <img id="foto_empleado" src="{{ empleado.foto.url }}" alt="Foto del empleado">
+                            </div>
+                        </div>
+                        <label class="custum-file-upload" for="file">
+                            <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="" viewBox="0 0 24 24"><g stroke-width="0" id="SVGRepo_bgCarrier"></g><g stroke-linejoin="round" stroke-linecap="round" id="SVGRepo_tracerCarrier"></g><g id="SVGRepo_iconCarrier"> <path fill="" d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z" clip-rule="evenodd" fill-rule="evenodd"></path> </g></svg>
+                            </div>
+                            <div class="text">
+                               <span>Ver los archivos en drive</span>
+                               </div>
+                            </label>                                           
+                        <div class="columns">
+                            <div class="column">
+                                <h2 style="margin-bottom: 30px;margin-top: -140px">Información General</h2>
+                                <div class="field">
+                                    <label>Nombres:</label>
+                                    <p id="nombres_empleado">{{ empleado.nombres }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Apellidos:</label>
+                                    <p id="apellidos_empleado">{{ empleado.apellidos }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Número de empleado:</label>
+                                    <p id="numero_empleado">{{ empleado.numero_interno }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Fecha de nacimiento:</label>
+                                    <p id="fecha_nacimiento_empleado">{{ empleado.fecha_nacimiento }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Cédula:</label>
+                                    <p id="cedula_empleado">{{ empleado.documento_identidad }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Domicilio:</label>
+                                    <p id="domicilio_empleado">{{ empleado.domicilio }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>e-mail:</label>
+                                    <p id="correo_empleado">{{ empleado.correo }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Celular:</label>
+                                    <p id="celular_empleado">{{ empleado.telefono }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>EPS:</label>
+                                    <p id="eps_empleado">{{ empleado.EPS }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Estado Civil:</label>
+                                    <p id="estado_civil_empleado">{{ empleado.estado_civil }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Dependientes Económicos:</label>
+                                    <p id="dependientes_empleado">{{ empleado.dependientes_economicos }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Cargo:</label>
+                                    <p id="cargo_empleado">{{ empleado.cargo }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Tipo de Contrato:</label>
+                                    <p id="tipo_contrato_empleado">{{ empleado.tipo_contrato }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Talla de Ropa:</label>
+                                    <p id="talla_ropa_empleado">{{ empleado.talla_ropa }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Talla de Calzado:</label>
+                                    <p id="talla_calzado_empleado">{{ empleado.talla_calzado }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="separador">
+                            <div class="formacion">
+                                <h2 style="margin-bottom: 30px">Información Academica</h2>
+                                <div class="field">
+                                    <label>Formación Reglada:</label>
+                                    <p id="formacion_reglada_empleado">{{ empleado.formacion_reglada }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Formación Complementaria:</label>
+                                    <p id="formacion_complementaria_empleado">{{ empleado.formacion_complementaria }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Institución de Graduación:</label>
+                                    <p id="institucion_graduacion_empleado">{{ empleado.institucion_graduacion }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Experiencias Previas:</label>
+                                    <p id="experiencias_empleado">{{ empleado.experiencias_previas }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <br>        
+                                
+                        <div class="separador">
+                            <div class="contacto-emergencia">
+                                <h2 style="margin-bottom: 30px">Contacto de Emergencia</h2>
+                                <div class="field">
+                                    <label>Relación con el Empleado:</label>
+                                    <p id="relacion_empleado">{{ empleado.relacion_empleado }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Nombres de Contacto:</label>
+                                    <p id="nombres_contacto_empleado">{{ empleado.contacto_nombres }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Apellidos de Contacto:</label>
+                                    <p id="apellidos_contacto_empleado">{{ empleado.contacto_apellidos }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Fecha de Nacimiento de Contacto:</label>
+                                    <p id="fecha_nacimiento_contacto_empleado">{{ empleado.contacto_fecha_nacimiento }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Carnet de Identidad de Contacto:</label>
+                                    <p id="carnet_identidad_contacto_empleado">{{ empleado.contacto_carnet_identidad }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Domicilio de Contacto:</label>
+                                    <p id="domicilio_contacto_empleado">{{ empleado.contacto_domicilio }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Teléfono de Contacto:</label>
+                                    <p id="telefono_contacto_empleado">{{ empleado.contacto_telefono }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Correo de Contacto:</label>
+                                    <p id="correo_contacto_empleado">{{ empleado.contacto_correo }}</p>
+                                </div>
+                            </div>
+                        </div>
+                                
+                        <div class="separador">
+                            <div class="informacion-bancaria">
+                                <h2 style="margin-bottom: 30px">Información Bancaria</h2>
+                                <div class="field">
+                                    <label>Banco:</label>
+                                    <p id="banco_empleado">{{ empleado.banco }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Tipo de Cuenta:</label>
+                                    <p id="tipo_cuenta_empleado">{{ empleado.tipo_cuenta }}</p>
+                                </div>
+                                <div class="field">
+                                    <label>Número de Cuenta:</label>
+                                    <p id="numero_cuenta_empleado">{{ empleado.numero_cuenta }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    document.getElementById("filter-toggle").addEventListener("click", function() {
+        var filterForm = document.getElementById("filter-form");
+        var filterContainer = document.querySelector(".filter-container");
+    
+        if (filterForm.style.display === "none" || filterForm.style.display === "") {
+            filterForm.style.display = "flex"; // Cambiar a flex para mostrar en horizontal
+            filterContainer.classList.add("show"); // Mostrar contenedor horizontalmente
+        } else {
+            filterForm.style.display = "none";
+            filterContainer.classList.remove("show"); // Ocultar contenedor horizontal
+        }
+    });
+
+    document.getElementById("clear-filter").addEventListener("click", function() {
+        // Limpiar todos los campos de filtro
+        document.getElementById("filter-form").reset();
+    });
+    
+
+    
+    
+    
+// Función para abrir el modal de detalles del empleado
+function abrirModal(empleado_id) {
+    // Cargar los datos del empleado en el modal antes de abrirlo
+    cargarDatos(empleado_id);
+    
+    // Mostrar el modal
+    var modal = document.getElementById("editar-modal");
+    modal.style.display = "block";
+}
+
+    // Función para cerrar el modal de detalles del proyecto
+    function cerrarModal() {
+        var modal = document.getElementById("editar-modal");
+        modal.style.display = "none";
+    }
+
+    // Asignar evento de clic para abrir el modal
+    document.getElementById("card").addEventListener("click", abrirModal);
+
+    // Asignar evento de clic para cerrar el modal
+    document.getElementById("boton-cerrar-modal").addEventListener("click", cerrarModal);
+
+
+    //Funcion para confirmar la edicion
+    function confirmarEdicion() {
+        // Obtener el formulario de edición dentro del modal
+        var modal = document.getElementById("editar-modal");
+        var formulario = modal.querySelector("form");
+    
+        // Verificar que se haya encontrado el formulario
+        if (!formulario) {
+            console.error("No se pudo encontrar el formulario dentro del modal.");
+            return;
+        }
+    
+        // Obtener los datos del formulario
+        var formData = new FormData(formulario);
+    
+        // Obtener el ID del proyecto
+        var empleadoId = document.getElementById("empleado_id").value;
+    
+        // Enviar los datos al servidor utilizando AJAX
+        fetch('/detalles_empleado/' + empleadoId + '/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Hubo un problema al actualizar los datos.');
+            }
+            // Cerrar el modal después de confirmar la edición
+            cerrarModal();
+            // Recargar la página para mostrar los cambios actualizados (opcional)
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Mostrar un mensaje de error al usuario
+            alert("Ha dejado campos vacios");
+        });
+    }
+
+
+   // Función para cargar los datos del proyecto en el modal de detalles del proyecto
+   function cargarDatos(empleado_id) {
+    // Obtener los datos del empleado mediante una petición AJAX
+    fetch(`/obtener_empleado/${empleado_id}/`)
+        .then(response => response.json())
+        .then(data => {
+            // Llenar los campos del formulario con los datos del empleado obtenido
+            document.getElementById("empleado_id").value = data.id;
+            document.getElementById("foto_empleado").src = data.foto;
+            document.getElementById("nombres_empleado").innerText = data.nombres;
+            document.getElementById("apellidos_empleado").innerText = data.apellidos;
+            document.getElementById("numero_empleado").innerText = data.numero_interno;
+            document.getElementById("fecha_nacimiento_empleado").innerText = data.fecha_nacimiento;
+            document.getElementById("cedula_empleado").innerText = data.documento_identidad;
+            document.getElementById("domicilio_empleado").innerText = data.domicilio;
+            document.getElementById("correo_empleado").innerText = data.correo;
+            document.getElementById("celular_empleado").innerText = data.telefono;
+            document.getElementById("eps_empleado").innerText = data.EPS;
+            document.getElementById("estado_civil_empleado").innerText = data.estado_civil;
+            document.getElementById("dependientes_empleado").innerText = data.dependientes_economicos;
+            document.getElementById("cargo_empleado").innerText = data.cargo;
+            document.getElementById("tipo_contrato_empleado").innerText = data.tipo_contrato;
+            document.getElementById("talla_ropa_empleado").innerText = data.talla_ropa;
+            document.getElementById("talla_calzado_empleado").innerText = data.talla_calzado;
+            document.getElementById("formacion_reglada_empleado").innerText = data.formacion_reglada;
+            document.getElementById("formacion_complementaria_empleado").innerText = data.formacion_complementaria;
+            document.getElementById("institucion_graduacion_empleado").innerText = data.institucion_graduacion;
+            document.getElementById("experiencias_empleado").innerText = data.experiencias_previas;
+            document.getElementById("relacion_empleado").innerText = data.relacion_empleado;
+            document.getElementById("nombres_contacto_empleado").innerText = data.contacto_nombres;
+            document.getElementById("apellidos_contacto_empleado").innerText = data.contacto_apellidos;
+            document.getElementById("fecha_nacimiento_contacto_empleado").innerText = data.contacto_fecha_nacimiento;
+            document.getElementById("carnet_identidad_contacto_empleado").innerText = data.contacto_carnet_identidad;
+            document.getElementById("domicilio_contacto_empleado").innerText = data.contacto_domicilio;
+            document.getElementById("telefono_contacto_empleado").innerText = data.contacto_telefono;
+            document.getElementById("correo_contacto_empleado").innerText = data.contacto_correo;
+            document.getElementById("banco_empleado").innerText = data.banco;
+            document.getElementById("tipo_cuenta_empleado").innerText = data.tipo_cuenta;
+            document.getElementById("numero_cuenta_empleado").innerText = data.numero_cuenta;
+
+            // Abrir el modal de detalles del empleado
+            abrirModal();
+        })
+        .catch(error => console.log("Error:", error));
+}
+
+
+</script>
+{% endblock %}

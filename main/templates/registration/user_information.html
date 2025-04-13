@@ -1,0 +1,208 @@
+{% extends "dashboard/header.html" %}
+
+{% load static %}
+
+
+{% block title %} Perfil del usuario {% endblock%}
+
+{% block content %}
+
+<style>
+    
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        z-index: -1;
+    }
+    .container {
+        margin-top: -80px;
+        max-width: 1300px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+    }
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+    .form-group {
+        margin-bottom: 20px;
+        margin-right: 50px;
+        width: 300px;
+        margin-left: auto; /* Alinea a la derecha */
+        max-width: 300px;
+        
+    }
+    .form-group1 {
+        margin-bottom: 20px;
+        margin-left: 50px;
+    }
+
+    .form-group1 label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .file-input-container {
+        position: relative;
+        width: fit-content;
+    }
+
+    .file-input-button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 5px;
+        
+    }
+
+    .file-input-button:hover {
+        background-color: #0056b3;
+    }
+
+    .file-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        font-family: Arial, sans-serif;
+
+    }
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+        z-index: -1;
+        margin-right: 10px;
+
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="date"],
+    input[type="file"] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-right: 10px;
+    }
+    input[type="text"][readonly] {
+        background-color: #f4f4f4;
+        cursor: not-allowed;
+        margin-right: 10px;
+
+    }
+    input[type="submit"] {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+    img {
+        max-width: 200px;
+    }
+
+    h2 {
+        margin-top: 120px;
+        margin-bottom: -40px;
+        margin-left: 20px;
+        color: rgb(69, 72, 74);
+    }
+    .container-2{
+        margin-top: -350px;
+        margin-left: 400px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Dos columnas de tamaño igual */
+        gap: -50px; /* Espacio entre columnas */
+    }
+</style>
+<h2>Mi Perfil</h2>
+
+<div class="container">
+    <h1>Perfil de Usuario</h1>
+    <form action="{% url 'guardar_cambios_usuario' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group1">
+            <label for="imagen">Imagen de perfil:</label>
+
+            {% if user.imagen %}
+                <img src="{{ user.imagen.url }}" alt="Imagen de perfil">
+            {% else %}
+                <img src="{% static 'images/default.png' %}" alt="Imagen de perfil predeterminada" class="profile-image">
+                <p>No hay imagen de perfil</p>
+            {% endif %}
+
+            <div class="file-input-container">
+                <input type="file" id="imagen" name="imagen" class="file-input">
+                <button class="file-input-button">Seleccionar imagen</button>
+            </div>
+            
+        </div>
+        <div class="container-2">
+            <div class="form-group">
+                <label for="username">Identificación:</label>
+                <input type="text" id="username" name="username" value="{{ user.username }}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="nombres">Nombres:</label>
+                <input type="text" id="nombres" name="nombres" value="{{ user.nombres }}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="apellidos">Apellidos:</label>
+                <input type="text" id="apellidos" name="apellidos" value="{{ user.apellidos }}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="cargo">Cargo:</label>
+                <input type="text" id="cargo" name="cargo" value="{{ user.cargo }}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="email">Correo electrónico:</label>
+                <input type="email" id="email" name="email" value="{{ user.email }}">
+            </div>
+            <div class="form-group">
+                <label for="celular">Celular:</label>
+                <input type="text" id="celular" name="celular" value="{{ user.celular }}">
+            </div>
+            <div class="form-group">
+                <label for="genero">Género:</label>
+                <input type="text" id="genero" name="genero" value="{{ user.genero }}" readonly>
+            </div>
+    
+            <div class="form-group">
+                <label for="pais">País:</label>
+                <input type="text" id="pais" name="pais" value="{{ user.pais }}">
+            </div>
+            <div class="form-group">
+                <label for="direccion">Dirección:</label>
+                <input type="text" id="direccion" name="direccion" value="{{ user.direccion }}">
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Guardar cambios">
+            </div>
+        
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+</body>
