@@ -236,3 +236,26 @@ def solicitudes(request):
 def calendario(request):
     entrevistas = Entrevista.objects.all()
     return render(request, 'dashboard/calendario.html', {'entrevistas': entrevistas})
+
+def ejemplo(request):
+    if request.user.is_authenticated:
+        usuario = request.user
+
+        total_empleados = Empleado.objects.count()
+        asistencias_hoy = Asistencia.objects.filter(fecha=now().date()).count()
+        vacaciones_pendientes = Vacacion.objects.filter(aprobada=False).count()
+        entrevistas_programadas = Entrevista.objects.filter(fecha_programada__gte=now().date()).count()
+        solicitudes_pendientes = Permiso.objects.filter(aprobado=False).count()
+
+        context = {
+            'usuario': usuario,
+            'total_empleados': total_empleados,
+            'asistencias_hoy': asistencias_hoy,
+            'vacaciones_pendientes': vacaciones_pendientes,
+            'entrevistas_programadas': entrevistas_programadas,
+            'solicitudes_pendientes': solicitudes_pendientes,
+        }
+
+        return render(request, 'dashboard/ejemplo.html', context)
+    else:
+        return redirect('index')

@@ -36,5 +36,6 @@ urlpatterns = [
     path('registrar-asistencia/', views.registrar_asistencia, name='registrar_asistencia'),
     path('solicitudes/', views.solicitudes, name='solicitudes'),
     path('calendario/', views.calendario, name='calendario'),
+    path('ejemplo/', views.ejemplo, name='ejemplo'),
 
 ]

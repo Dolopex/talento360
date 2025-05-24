@@ -156,4 +156,7 @@ class Permiso(models.Model):
 
     def __str__(self):
         return f"Permiso de {self.empleado.nombres} {self.empleado.apellidos}"
+    
+
+
 
