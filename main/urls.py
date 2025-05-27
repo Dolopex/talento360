@@ -36,6 +36,15 @@ urlpatterns = [
     path('registrar-asistencia/', views.registrar_asistencia, name='registrar_asistencia'),
     path('solicitudes/', views.solicitudes, name='solicitudes'),
     path('calendario/', views.calendario, name='calendario'),
-    path('ejemplo/', views.ejemplo, name='ejemplo'),
+    path('registro_empleados/', views.registrar_empleado, name='registro_empleados'),
+    path('empleados/crear/', views.crear_empleado, name='crear_empleado'),
+    path('empleados/actualizar/<int:empleado_id>/', views.actualizar_empleado, name='actualizar_empleado'),
+    path('editar_empleado/<int:empleado_id>/', views.editar_empleado, name='editar_empleado'),
+    path('historial-empleados/', views.historial_empleados, name='historial_empleados'),
+    path('empleado/<int:empleado_id>/', views.detalle_empleado, name='detalle_empleado'),
+    path('empleado/<int:empleado_id>/editar/', views.actualizar_empleado, name='actualizar_empleado'),
+    path('empleado/<int:empleado_id>/cambiar-estado/', views.cambiar_estado_empleado, name='cambiar_estado_empleado'),
+
+    
 
 ]

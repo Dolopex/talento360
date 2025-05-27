@@ -1,0 +1,243 @@
+{% extends "dashboard/header.html" %}
+
+{% load static %}
+
+
+{% block title %} Perfil del usuario {% endblock%}
+
+{% block content %}
+
+<div class="historial-container">
+    <div class="container">
+        <h2>Historial de Empleados</h2>
+
+        <!-- Estadísticas -->
+        <div class="stats">
+            <span class="stat-item">Activos: {{ total_activos }}</span>
+            <span class="stat-item">Inactivos: {{ total_inactivos }}</span>
+            <span class="stat-item">Total: {{ total_activos|add:total_inactivos }}</span>
+        </div>
+
+        <!-- Filtros -->
+        <form method="get" class="filters-form">
+            <input type="text" name="q" placeholder="Buscar por nombre o apellido" value="{{ query }}" class="input-search">
+
+            <select name="estado" class="input-select">
+                <option value="todos" {% if estado == 'todos' %}selected{% endif %}>Todos</option>
+                <option value="activo" {% if estado == 'activo' %}selected{% endif %}>Activos</option>
+                <option value="inactivo" {% if estado == 'inactivo' %}selected{% endif %}>Inactivos</option>
+            </select>
+
+            <input type="text" name="cargo" placeholder="Filtrar por cargo" value="{{ cargo }}" class="input-search">
+
+            <button type="submit" class="btn-filtrar">Filtrar</button>
+        </form>
+
+        <!-- Tabla de empleados -->
+        <table class="empleados-table">
+            <thead>
+                <tr>
+                    <th>Foto</th>
+                    <th>Nombre completo</th>
+                    <th>Cargo</th>
+                    <th>Estado</th>
+                    <th>Fecha ingreso</th>
+                    <th>Fecha salida</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for empleado in empleados %}
+                <tr>
+                    <td>
+                        {% if empleado.foto %}
+                        <img src="{{ empleado.foto.url }}" alt="Foto" class="empleado-foto">
+                        {% else %}
+                        <div class="placeholder-foto">Sin foto</div>
+                        {% endif %}
+                    </td>
+                    <td>{{ empleado.nombres }} {{ empleado.apellidos }}</td>
+                    <td>{{ empleado.cargo }}</td>
+                    <td>{% if empleado.activo %}<span class="estado-activo">Activo</span>{% else %}<span class="estado-inactivo">Inactivo</span>{% endif %}</td>
+                    <td>{{ empleado.fecha_ingreso|date:"d/m/Y" }}</td>
+                    <td>{{ empleado.fecha_salida|date:"d/m/Y" }}</td>
+                    <td>
+                        <a href="{% url 'detalle_empleado' empleado.id %}" class="btn btn-sm btn-info">Ver</a>
+                        <a href="{% url 'actualizar_empleado' empleado.id %}" class="btn btn-sm btn-warning">Editar</a>
+                        {% if empleado.contrato %}
+                            <a href="{{ empleado.contrato.url }}" download class="btn btn-sm btn-secondary">Contrato</a>
+                        {% endif %}
+                        <form action="{% url 'cambiar_estado_empleado' empleado.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                {% if empleado.activo %}Desactivar{% else %}Activar{% endif %}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7">No hay empleados para mostrar.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f8f8;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    h2 {
+        margin-top: 50px;
+    }
+
+    .historial-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 5rem 1rem 2rem;
+    }
+
+    .filters-form {
+        margin-bottom: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .input-search,
+    .input-select {
+        padding: 0.5rem 0.75rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        min-width: 200px;
+        background: #fff;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .input-search:focus,
+    .input-select:focus {
+        border-color: #ff7f11;
+        box-shadow: 0 0 4px rgba(255, 127, 17, 0.3);
+        outline: none;
+    }
+
+    .btn-filtrar {
+        background-color: #ff7f11;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-filtrar:hover {
+        background-color: #e56e00;
+    }
+
+    .empleados-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .empleados-table th {
+        background-color: #ff7f11;
+        color: white;
+        padding: 1rem;
+        text-align: center;
+        font-weight: bold;
+        font-size: 0.95rem;
+    }
+
+    .empleados-table td {
+        padding: 0.75rem;
+        text-align: center;
+        border-top: 1px solid #f2f2f2;
+        vertical-align: middle;
+        font-size: 0.95rem;
+    }
+
+    .empleado-foto {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .placeholder-foto {
+        width: 48px;
+        height: 48px;
+        background: #f0f0f0;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #999;
+        font-size: 0.8rem;
+    }
+
+    .estado-activo {
+        color: #28a745;
+        font-weight: bold;
+    }
+
+    .estado-inactivo {
+        color: #dc3545;
+        font-weight: bold;
+    }
+
+    .btn-sm {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+        border-radius: 6px;
+        text-decoration: none;
+        margin: 0 3px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-sm:hover {
+        opacity: 0.9;
+    }
+</style>
+
+
+
+
+{% endblock %}

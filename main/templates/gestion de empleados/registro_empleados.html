@@ -1,0 +1,232 @@
+{% extends "dashboard/header.html" %}
+
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static '' %}" />
+
+{% block title %} Gestion de Empleados {% endblock%}
+
+{% block content%}
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Gestión de Empleados</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+<style>
+    .registro-empleados {
+        font-family: 'Inter', sans-serif;
+        background-color: #f9fafb;
+        color: #111827;
+        padding: 40px 20px;
+    }
+
+    .registro-empleados h1,
+    .registro-empleados h2 {
+        text-align: center;
+        color: #ea580c;
+        margin-bottom: 30px;
+    }
+
+    .registro-empleados .container {
+        max-width: 1200px;
+        margin: auto;
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    .registro-empleados .filtro-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px;
+        margin-bottom: 25px;
+    }
+
+    .registro-empleados .filtro-form input {
+        padding: 10px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 14px;
+        background: #ffffff;
+        transition: border 0.2s;
+    }
+
+    .registro-empleados .filtro-form input:focus {
+        border-color: #f97316;
+        outline: none;
+    }
+
+    .registro-empleados .filtro-form button {
+        padding: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .registro-empleados .filtro-form button[type="submit"] {
+        background-color: #f97316;
+        color: #ffffff;
+    }
+
+    .registro-empleados .filtro-form button[name="limpiar"] {
+        background-color: #ef4444;
+        color: #ffffff;
+    }
+
+    .registro-empleados .filtro-form button:hover {
+        opacity: 0.9;
+    }
+
+    .registro-empleados .btn-crear {
+        display: inline-block;
+        background-color: #f97316;
+        color: #ffffff;
+        padding: 10px 18px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: transform 0.2s;
+        margin-bottom: 24px;
+    }
+
+    .registro-empleados .btn-crear:hover {
+        transform: scale(1.03);
+    }
+
+    .registro-empleados table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    .registro-empleados thead {
+        background-color: #f97316;
+        color: #ffffff;
+    }
+
+    .registro-empleados th,
+    .registro-empleados td {
+        padding: 14px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 15px;
+    }
+
+    .registro-empleados tbody tr:hover {
+        background-color: #fef3c7;
+    }
+
+    .registro-empleados img {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 1px solid #e5e7eb;
+    }
+
+    .registro-empleados .btn-editar {
+        background-color: #ea580c;
+        color: #ffffff;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background-color 0.2s;
+    }
+
+    .registro-empleados .btn-editar:hover {
+        background-color: #c2410c;
+    }
+
+    .registro-empleados .no-data {
+        text-align: center;
+        color: #6b7280;
+        font-style: italic;
+        padding: 20px;
+    }
+</style>
+
+
+</head>
+<body>
+    <div class="registro-empleados">
+            <h2>Registro y actualización de Datos</h2>
+    <div class="container">
+        <h1>Gestión de Empleados</h1>
+
+        <!-- Formulario de filtros -->
+        <form method="get" class="filtro-form">
+            <input type="text" name="nombres" placeholder="Nombres" value="{{ request.GET.nombres|default_if_none:'' }}">
+            <input type="text" name="apellidos" placeholder="Apellidos" value="{{ request.GET.apellidos|default_if_none:'' }}">
+            <input type="text" name="cargo" placeholder="Cargo" value="{{ request.GET.cargo|default_if_none:'' }}">
+            <input type="text" name="documento_identidad" placeholder="Documento Identidad" value="{{ request.GET.documento_identidad|default_if_none:'' }}">
+            <input type="text" name="tipo_contrato" placeholder="Tipo Contrato" value="{{ request.GET.tipo_contrato|default_if_none:'' }}">
+            <input type="text" name="numero_interno" placeholder="Número Interno" value="{{ request.GET.numero_interno|default_if_none:'' }}">
+            <button type="submit">Filtrar</button>
+            <button type="submit" name="limpiar" value="1" style="background-color: #dc3545;">Limpiar</button>
+        </form>
+
+        <!-- Botón para crear nuevo empleado -->
+        <a href="{% url 'crear_empleado' %}" class="btn-crear">Registrar Nuevo Empleado</a>
+
+        <!-- Tabla de empleados -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Foto</th>
+                    <th>Nombres</th>
+                    <th>Apellidos</th>
+                    <th>Documento</th>
+                    <th>Cargo</th>
+                    <th>Tipo Contrato</th>
+                    <th>Número Interno</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if empleados %}
+                    {% for empleado in empleados %}
+                    <tr>
+                        <td>
+                            {% if empleado.foto %}
+                                <img src="{{ empleado.foto.url }}" alt="Foto {{ empleado.nombres }}">
+                            {% else %}
+                                <img src="{% static 'images/default_profile.png' %}" alt="Sin foto">
+                            {% endif %}
+                        </td>
+                        <td>{{ empleado.nombres }}</td>
+                        <td>{{ empleado.apellidos }}</td>
+                        <td>{{ empleado.documento_identidad }}</td>
+                        <td>{{ empleado.cargo }}</td>
+                        <td>{{ empleado.tipo_contrato }}</td>
+                        <td>{{ empleado.numero_interno }}</td>
+                        <td>
+                            <a href="{% url 'editar_empleado' empleado.id %}" class="btn-editar">Editar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="8" class="no-data">No hay empleados registrados.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+
+</div>
+
+
+
+
+{% endblock %}

@@ -11,6 +11,13 @@ import logging
 from django.contrib.auth import logout
 from django.http import JsonResponse
 from django.utils.timezone import now
+from django.shortcuts import render, get_object_or_404, redirect
+import os
+from django.views.decorators.http import require_POST
+from .models import Empleado, HistorialEmpleado
+from django.db.models import Q
+from django.utils import timezone
+
 
 
 # Create your views here.
@@ -89,7 +96,7 @@ def dashboard(request):
             'solicitudes_pendientes': solicitudes_pendientes,
         }
 
-        return render(request, 'dashboard/dashboard.html', context)
+        return render(request, 'dashboard/dashboard.html',  context)
     else:
         return redirect('index')
 
@@ -130,13 +137,68 @@ def registrar_empleado(request):
             if request.method == 'GET' and 'limpiar' in request.GET:
                    empleados = Empleado.objects.all()  # Reiniciar el filtro
 
-            return render(request, 'recursos_humanos/registro_empleados.html', {'usuario': usuario, 'empleados': empleados})     
+            return render(request, 'gestion de empleados/registro_empleados.html', {'usuario': usuario, 'empleados': empleados})     
         else:
             return error_permisos(request)
     else:
         return redirect('index')
+    
+def editar_empleado(request, empleado_id):
+    empleado = get_object_or_404(Empleado, pk=empleado_id)
 
+    if request.method == 'POST':
+        form = EmpleadoForm(request.POST, request.FILES, instance=empleado)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Empleado actualizado correctamente.')
+            return redirect('registrar_empleado')  # Redirige a la lista de empleados
+    else:
+        form = EmpleadoForm(instance=empleado)
 
+    return render(request, 'gestion de empleados/editar_empleado.html', {
+        'form': form,
+        'empleado': empleado
+    })
+    
+def actualizar_empleado(request, empleado_id):
+    empleado = get_object_or_404(Empleado, pk=empleado_id)
+    
+    contrato_nombre = os.path.basename(empleado.contrato.name) if empleado.contrato else ''
+    
+    if request.method == 'POST':
+        form = EmpleadoForm(request.POST, request.FILES, instance=empleado)
+        if form.is_valid():
+            empleado_original = Empleado.objects.get(pk=empleado.pk)
+            empleado_modificado = form.save(commit=False)
+            
+            cambios = []
+            for field in form.changed_data:
+                valor_original = getattr(empleado_original, field)
+                valor_nuevo = getattr(empleado_modificado, field)
+                cambios.append(f"{field}: '{valor_original}' → '{valor_nuevo}'")
+            
+            empleado_modificado.save()
+            
+            descripcion_cambios = "Cambios realizados: " + "; ".join(cambios) if cambios else "Sin cambios detectados"
+            HistorialEmpleado.objects.create(
+                empleado=empleado,
+                descripcion=descripcion_cambios,
+                usuario=request.user if request.user.is_authenticated else None,
+            )
+            
+            messages.success(request, 'Empleado actualizado correctamente.')
+            return redirect('registro_empleados')
+        else:
+            messages.error(request, 'Por favor corrige los errores en el formulario.')
+    else:
+        form = EmpleadoForm(instance=empleado)
+        
+    context = {
+        'form': form,
+        'empleado': empleado,
+        'contrato_nombre': contrato_nombre,
+    }
+    return render(request, 'gestion de empleados/editar_empleado.html', context)
 
 
 def obtener_empleado(request, empleado_id):
@@ -220,6 +282,67 @@ def guardar_cambios_usuario(request):
         form = UsuarioForm(instance=request.user)
     return render(request, 'registration/user_information.html', {'form': form})
 
+def historial_empleados(request):
+    # Filtros desde GET
+    query = request.GET.get('q', '')
+    estado = request.GET.get('estado', 'todos')  # activo, inactivo, todos
+    cargo = request.GET.get('cargo', '')
+    
+    empleados = Empleado.objects.all()
+    
+    if estado == 'activo':
+        empleados = empleados.filter(activo=True)
+    elif estado == 'inactivo':
+        empleados = empleados.filter(activo=False)
+    
+    if query:
+        empleados = empleados.filter(
+            Q(nombres__icontains=query) | Q(apellidos__icontains=query)
+        )
+    if cargo:
+        empleados = empleados.filter(cargo__icontains=cargo)
+    
+    total_activos = Empleado.objects.filter(activo=True).count()
+    total_inactivos = Empleado.objects.filter(activo=False).count()
+
+    context = {
+        'empleados': empleados.order_by('apellidos', 'nombres'),
+        'query': query,
+        'estado': estado,
+        'cargo': cargo,
+        'total_activos': total_activos,
+        'total_inactivos': total_inactivos,
+    }
+    return render(request, 'gestion de empleados/historial_empleados.html', context)
+
+def detalle_empleado(request, empleado_id):
+    empleado = get_object_or_404(Empleado, pk=empleado_id)
+    historial = empleado.historiales.order_by('-fecha')
+
+    return render(request, 'gestion de empleados/detalle_empleado.html', {
+        'empleado': empleado,
+        'historial': historial,
+    })
+
+@require_POST
+def cambiar_estado_empleado(request, empleado_id):
+    empleado = get_object_or_404(Empleado, pk=empleado_id)
+    empleado.activo = not empleado.activo
+    if not empleado.activo:
+        empleado.fecha_salida = timezone.now()
+    else:
+        empleado.fecha_salida = None
+    empleado.save()
+
+    # Opcional: crear un log de cambio de estado
+    HistorialEmpleado.objects.create(
+        empleado=empleado,
+        usuario=request.user if request.user.is_authenticated else None,
+        descripcion=f"Empleado {'activado' if empleado.activo else 'desactivado'}"
+    )
+    return redirect('historial_empleados')
+
+
 def empleados(request):
     empleados = Empleado.objects.all()
     return render(request, 'dashboard/empleados.html', {'empleados': empleados})
@@ -236,26 +359,3 @@ def solicitudes(request):
 def calendario(request):
     entrevistas = Entrevista.objects.all()
     return render(request, 'dashboard/calendario.html', {'entrevistas': entrevistas})
-
-def ejemplo(request):
-    if request.user.is_authenticated:
-        usuario = request.user
-
-        total_empleados = Empleado.objects.count()
-        asistencias_hoy = Asistencia.objects.filter(fecha=now().date()).count()
-        vacaciones_pendientes = Vacacion.objects.filter(aprobada=False).count()
-        entrevistas_programadas = Entrevista.objects.filter(fecha_programada__gte=now().date()).count()
-        solicitudes_pendientes = Permiso.objects.filter(aprobado=False).count()
-
-        context = {
-            'usuario': usuario,
-            'total_empleados': total_empleados,
-            'asistencias_hoy': asistencias_hoy,
-            'vacaciones_pendientes': vacaciones_pendientes,
-            'entrevistas_programadas': entrevistas_programadas,
-            'solicitudes_pendientes': solicitudes_pendientes,
-        }
-
-        return render(request, 'dashboard/ejemplo.html', context)
-    else:
-        return redirect('index')

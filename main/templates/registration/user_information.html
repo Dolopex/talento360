@@ -30,6 +30,7 @@
     h1 {
         text-align: center;
         color: #333;
+        margin-bottom: 70px;
     }
     .form-group {
         margin-bottom: 20px;
@@ -146,11 +147,12 @@
             <label for="imagen">Imagen de perfil:</label>
 
             {% if user.imagen %}
-                <img src="{{ user.imagen.url }}" alt="Imagen de perfil">
+                <img id="preview" src="{{ user.imagen.url }}" alt="Imagen de perfil" style="max-width: 200px; max-height: 200px;">
             {% else %}
-                <img src="{% static 'images/default.png' %}" alt="Imagen de perfil predeterminada" class="profile-image">
+                <img id="preview" src="{% static 'images/default.png' %}" alt="Imagen de perfil predeterminada" class="profile-image" style="max-width: 200px; max-height: 200px;">
                 <p>No hay imagen de perfil</p>
             {% endif %}
+
 
             <div class="file-input-container">
                 <input type="file" id="imagen" name="imagen" class="file-input">
@@ -203,6 +205,16 @@
         </div>
     </form>
 </div>
+
+<script>
+    document.getElementById('imagen').addEventListener('change', function(event) {
+        const [file] = event.target.files;
+        if (file) {
+            const preview = document.getElementById('preview');
+            preview.src = URL.createObjectURL(file);
+        }
+    });
+</script>
 
 {% endblock %}
 </body>

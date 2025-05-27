@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, User
 import json
+from django.conf import settings
 
 class UsuarioManager(BaseUserManager):
     def create_user(self,email,username,nombres,apellidos,password=None):
@@ -80,6 +81,8 @@ class Empleado(models.Model):
     documento_identidad = models.IntegerField(null=True, blank=False)
     domicilio = models.CharField(max_length=255, blank=False)
     correo = models.EmailField(blank=False)
+    fecha_ingreso = models.DateField(null=True, blank=True)
+    fecha_salida = models.DateField(null=True, blank=True)
     telefono = models.IntegerField(null=True, blank=False)
     EPS = models.CharField(max_length=100, blank=False)
     estado_civil = models.CharField(max_length=20, blank=False)
@@ -119,6 +122,15 @@ class Empleado(models.Model):
 
     def __str__(self):
         return f"{self.nombres} {self.apellidos}"
+    
+class HistorialEmpleado(models.Model):
+    empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE, related_name='historiales')
+    fecha = models.DateTimeField(auto_now_add=True)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    descripcion = models.TextField()
+
+    def __str__(self):
+        return f"Historial de {self.empleado.nombres} {self.empleado.apellidos} - {self.fecha.strftime('%Y-%m-%d %H:%M')}"
     
 class Asistencia(models.Model):
     empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)

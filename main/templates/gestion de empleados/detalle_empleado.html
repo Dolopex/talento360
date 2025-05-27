@@ -1,0 +1,127 @@
+{% extends "dashboard/header.html" %}
+
+{% load static %}
+
+
+{% block title %} Historial {% endblock%}
+
+{% block content %}
+
+<div class="detalle-container">
+    <h2>👤 Detalle del Empleado</h2>
+
+    <div class="empleado-card">
+        <img src="{{ empleado.foto.url }}" alt="Foto" class="empleado-foto-large">
+
+        <div class="empleado-datos">
+            <p><strong>Nombre:</strong> {{ empleado.nombres }} {{ empleado.apellidos }}</p>
+            <p><strong>Cargo:</strong> {{ empleado.cargo }}</p>
+            <p><strong>Estado:</strong> 
+                {% if empleado.activo %}
+                    <span class="estado-activo">Activo</span>
+                {% else %}
+                    <span class="estado-inactivo">Inactivo</span>
+                {% endif %}
+            </p>
+            <p><strong>Fecha de ingreso:</strong> {{ empleado.fecha_ingreso|date:"d/m/Y" }}</p>
+            {% if empleado.fecha_salida %}
+                <p><strong>Fecha de salida:</strong> {{ empleado.fecha_salida|date:"d/m/Y" }}</p>
+            {% endif %}
+            {% if empleado.contrato %}
+                <p><strong>Contrato:</strong> 
+                    <a href="{{ empleado.contrato.url }}" class="btn-sm btn-info" download>📄 Descargar contrato</a>
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <h3>📑 Historial de Cambios</h3>
+    <ul class="historial-list">
+        {% for log in historial %}
+            <li><strong>{{ log.fecha|date:"d/m/Y H:i" }}</strong> — {{ log.descripcion }} 
+                {% if log.usuario %}
+                    <em>(por {{ log.usuario.username }})</em>
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>No hay historial registrado.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<style>
+    .detalle-container {
+        max-width: 900px;
+        margin: 5rem auto 2rem;
+        padding: 2rem;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+
+    .empleado-card {
+        display: flex;
+        gap: 2rem;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .empleado-foto-large {
+        width: 160px;
+        height: 160px;
+        border-radius: 12px;
+        object-fit: cover;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .empleado-datos p {
+        margin: 0.3rem 0;
+        font-size: 1rem;
+    }
+
+    .estado-activo {
+        color: #28a745;
+        font-weight: bold;
+    }
+
+    .estado-inactivo {
+        color: #dc3545;
+        font-weight: bold;
+    }
+
+    .btn-sm {
+        padding: 0.3rem 0.7rem;
+        font-size: 0.85rem;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-block;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .btn-info:hover {
+        background-color: #138496;
+    }
+
+    .historial-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .historial-list li {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #eee;
+    }
+</style>
+
+
+{% endblock %}
