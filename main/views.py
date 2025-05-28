@@ -11,6 +11,7 @@ import logging
 from django.contrib.auth import logout
 from django.http import JsonResponse
 from django.utils.timezone import now
+from .models import Empleado
 
 
 # Create your views here.
@@ -259,3 +260,85 @@ def ejemplo(request):
         return render(request, 'dashboard/ejemplo.html', context)
     else:
         return redirect('index')
+    
+def ges_formacion(request):
+    usuario = request.user
+    return render(request, 'capacitacion/ges_formacion.html', {'usuario': usuario})
+
+def vista_planes_formacion(request):
+    planes = PlanFormacion.objects.all()
+    return render(request, "ges_formacion.html", {"planes": planes})
+
+def inscripciones(request):
+    usuario = request.user
+    return render(request, 'capacitacion/inscripciones.html', {'usuario': usuario})
+
+def obtener_sugerencias_empleados(request):
+    term = request.GET.get('term', '')  # Obtiene el término de búsqueda
+    empleados = Empleado.objects.filter(nombres__icontains=term)  # Filtra los empleados que coinciden con el término
+    sugerencias = [empleado.nombres for empleado in empleados]  # Extrae solo los nombres de los empleados
+    return JsonResponse(sugerencias, safe=False)
+
+def listar_planes(request):
+    planes = PlanFormacion.objects.all()
+    return render(request, 'ges_formacion.html', {'planes': planes})
+
+def agregar_plan(request):
+    if request.method == 'POST':
+        nombre_plan = request.POST.get('nombre_plan')
+        area = request.POST.get('area')
+        responsable = request.POST.get('responsable')
+        estado = request.POST.get('estado')
+        fecha_inicio = request.POST.get('fecha_inicio')
+        
+        nuevo_plan = PlanFormacion.objects.create(
+            nombre_plan=nombre_plan, 
+            area=area, 
+            responsable=responsable, 
+            estado=estado, 
+            fecha_inicio=fecha_inicio
+        )
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'fail'})
+
+def editar_plan(request, id):
+    plan = PlanFormacion.objects.get(id=id)
+    if request.method == 'POST':
+        plan.nombre_plan = request.POST.get('nombre_plan')
+        plan.area = request.POST.get('area')
+        plan.responsable = request.POST.get('responsable')
+        plan.estado = request.POST.get('estado')
+        plan.fecha_inicio = request.POST.get('fecha_inicio')
+        plan.save()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'fail'})
+
+def eliminar_plan(request, id):
+    plan = PlanFormacion.objects.get(id=id)
+    plan.delete()
+    return JsonResponse({'status': 'success'})
+
+def obtener_empleados(request):
+    if 'term' in request.GET:
+        term = request.GET['term']
+        empleados = Empleado.objects.filter(nombres__icontains=term)  # Buscamos por nombres
+        nombres = [empleado.nombres for empleado in empleados]  # Extraemos los nombres
+        return JsonResponse(nombres, safe=False)  # Devolvemos los nombres como respuesta JSON
+    return JsonResponse([], safe=False)
+
+def registro_cer(request):
+    usuario = request.user
+    return render(request, 'capacitacion/registro_cer.html', {'usuario': usuario})
+
+def ges_usuario(request):
+    if request.user.is_authenticated:
+        usuario = request.user
+        if request.user.cargo == 'Recursos humanos' or request.user.usuario_administrador:
+            return render(request, 'seguridad/ges_usuario.html', {'usuario': usuario})
+
+def control_acceso(request):
+    if request.user.is_authenticated:
+        usuario = request.user
+        if request.user.cargo == 'Recursos humanos' or request.user.usuario_administrador:
+            return render(request, 'seguridad/control_acceso.html', {'usuario': usuario})
+    

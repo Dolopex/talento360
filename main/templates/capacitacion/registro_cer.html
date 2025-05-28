@@ -1,0 +1,373 @@
+{% extends "dashboard/header.html" %}
+
+{% load static %}
+
+{% block title %} Perfil del usuario {% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro de Certificaciones</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    h1, h2 {
+      color: #2c3e50;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .section {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #F98D00;
+      color: white;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 20px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    form label {
+      font-weight: bold;
+    }
+
+    form input, form select, form textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    form button {
+      margin-top: 20px;
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    form button:hover {
+      background-color: #27ae60;
+    }
+
+    a {
+      color: white;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+    .drop-zone {
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      background-color: #f9f9f9;
+      transition: background-color 0.3s, border-color 0.3s;
+      position: relative;
+    }
+
+    .drop-zone:hover {
+      background-color: #f0f0f0;
+      border-color: #999;
+    }
+
+    .drop-zone.highlight {
+      background-color: #e0f7ff;
+      border-color: #00aaff;
+    }
+
+    .icon-container {
+      margin-bottom: 10px;
+    }
+
+    .upload-icon {
+      width: 60px;
+      height: 60px;
+      opacity: 0.7;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .filtro-certificaciones {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .filtro-certificaciones h4 {
+      margin-bottom: 15px;
+    }
+
+    .filtros-busqueda {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .filtros-busqueda input {
+      flex: 1 1 200px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Registro de Certificaciones Obtenidas</h1>
+
+    <!-- Sección 1: Listado de certificaciones -->
+    <div class="section">
+      <h2>Listado de certificaciones por empleado</h2>
+      <table id="tabla-certificaciones">
+        <thead>
+          <tr>
+            <th>Empleado</th>
+            <th>Cargo</th>
+            <th>Certificación</th>
+            <th>Institución</th>
+            <th>Fecha de obtención</th>
+            <th>Vencimiento</th>
+            <th>Documento</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Filas se agregarán aquí dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+    <div class="section filtro-certificaciones" style="margin-top: 30px; margin-bottom: 30px;">
+      <h4>Buscar certificaciones</h4>
+      <div class="filtros-busqueda">
+        <input type="text" id="buscar-nombre" placeholder="Buscar por nombre de empleado">
+        <input type="text" id="buscar-cargo" placeholder="Buscar por cargo">
+        <input type="text" id="buscar-certificacion" placeholder="Buscar por certificación">
+        <input type="text" id="buscar-institucion" placeholder="Buscar por institución">
+      </div>
+    </div>
+    <!-- Sección 2: Formulario -->
+    <div class="section">
+      <h2>Registrar nueva certificación</h2>
+      <form id="form-certificacion">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="empleado">Nombre del empleado:</label>
+            <input type="text" id="empleado" name="empleado" required>
+          </div>
+          <div class="form-group">
+            <label for="cargo">Cargo/Área:</label>
+            <input type="text" id="cargo" name="cargo" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="certificacion">Nombre de la certificación:</label>
+            <input type="text" id="certificacion" name="certificacion" required>
+          </div>
+          <div class="form-group">
+            <label for="institucion">Institución emisora:</label>
+            <input type="text" id="institucion" name="institucion" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fecha_obtencion">Fecha de obtención:</label>
+            <input type="date" id="fecha_obtencion" name="fecha_obtencion" required>
+          </div>
+          <div class="form-group">
+            <label for="fecha_vencimiento">Fecha de vencimiento (opcional):</label>
+            <input type="date" id="fecha_vencimiento" name="fecha_vencimiento">
+          </div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="documento">Subir certificado (PDF, JPG, PNG):</label>
+            <div class="drop-zone" id="drop-zone">
+              <div class="icon-container">
+                <img src="https://cdn-icons-png.flaticon.com/512/724/724933.png" alt="Subir archivo" class="upload-icon" />
+              </div>
+              <p id="drop-zone-text">Puedes arrastrar y soltar archivos aquí para añadirlos</p>
+              <input type="file" id="documento" name="documento" accept=".pdf, .jpg, .jpeg, .png" required />
+            </div>
+          </div>
+
+          <div style="text-align: right; margin-top: 15px;">
+            <button type="submit" class="btn btn-primary">Subir archivo</button>
+          </div>
+        </form>
+    </div>
+  </div>
+
+  <script>
+
+    function filtrarTablaCertificaciones() {
+      const nombre = document.getElementById("buscar-nombre").value.toLowerCase();
+      const cargo = document.getElementById("buscar-cargo").value.toLowerCase();
+      const certificacion = document.getElementById("buscar-certificacion").value.toLowerCase();
+      const institucion = document.getElementById("buscar-institucion").value.toLowerCase();
+
+      const filas = document.querySelectorAll("#tabla-certificaciones tbody tr");
+
+      filas.forEach(fila => {
+        const textoNombre = fila.cells[0].textContent.toLowerCase();
+        const textoCargo = fila.cells[1].textContent.toLowerCase();
+        const textoCertificacion = fila.cells[2].textContent.toLowerCase();
+        const textoInstitucion = fila.cells[3].textContent.toLowerCase();
+
+        const coincide = 
+          textoNombre.includes(nombre) &&
+          textoCargo.includes(cargo) &&
+          textoCertificacion.includes(certificacion) &&
+          textoInstitucion.includes(institucion);
+
+        fila.style.display = coincide ? "" : "none";
+      });
+    }
+
+    document.querySelectorAll(".filtros-busqueda input").forEach(input => {
+      input.addEventListener("input", filtrarTablaCertificaciones);
+    });
+
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('documento');
+    const text = document.getElementById('drop-zone-text');
+
+    // Abrir selector al hacer clic
+    dropZone.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    // Actualizar texto al seleccionar archivo
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length > 0) {
+        text.textContent = `Archivo seleccionado: ${fileInput.files[0].name}`;
+      }
+    });
+
+    // Evitar comportamiento por defecto
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }, false);
+    });
+
+    // Efecto visual al arrastrar
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, () => {
+        dropZone.classList.add('highlight');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, () => {
+        dropZone.classList.remove('highlight');
+      }, false);
+    });
+
+    // Mover archivo al input
+    dropZone.addEventListener('drop', (e) => {
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        fileInput.files = files;
+        text.textContent = `Archivo seleccionado: ${files[0].name}`;
+      }
+    });
+    document.getElementById("form-certificacion").addEventListener("submit", function(event) {
+      event.preventDefault(); // Evita recargar la página
+
+      // Obtener valores del formulario
+      const empleado = document.getElementById("empleado").value;
+      const cargo = document.getElementById("cargo").value;
+      const certificacion = document.getElementById("certificacion").value;
+      const institucion = document.getElementById("institucion").value;
+      const fechaObtencion = document.getElementById("fecha_obtencion").value;
+      const fechaVencimiento = document.getElementById("fecha_vencimiento").value || "N/A";
+      const documento = document.getElementById("documento").files[0];
+
+      // Crear enlace de descarga temporal si hay archivo
+      let documentoLink = "No disponible";
+      if (documento) {
+        const url = URL.createObjectURL(documento);
+        documentoLink = `<a href="${url}" download="${documento.name}" target="_blank" style="color: #2980b9;">${documento.name}</a>`;
+      }
+
+      // Crear nueva fila
+      const tabla = document.getElementById("tabla-certificaciones").getElementsByTagName("tbody")[0];
+      const nuevaFila = tabla.insertRow();
+      nuevaFila.innerHTML = `
+        <td>${empleado}</td>
+        <td>${cargo}</td>
+        <td>${certificacion}</td>
+        <td>${institucion}</td>
+        <td>${fechaObtencion}</td>
+        <td>${fechaVencimiento}</td>
+        <td>${documentoLink}</td>
+      `;
+
+      // Limpiar formulario
+      document.getElementById("form-certificacion").reset();
+    });
+  </script>
+
+</body>
+</html>
+{% endblock %}

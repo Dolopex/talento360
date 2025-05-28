@@ -1,0 +1,305 @@
+{% extends "dashboard/header.html" %}
+
+{% load static %}
+
+{% block title %} Perfil del usuario {% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background-color: #f8f9fa;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        th {
+            background-color: #F98D00;
+            color: white;
+            padding: 12px;
+            border-radius: 10px 10px 0 0;
+            text-align: left;
+        }
+
+        td {
+            background-color: white;
+            padding: 12px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        tr:not(:last-child) td {
+            border-bottom: 1px solid #ccc;
+        }
+
+        tr:hover td {
+            background-color: #eef6ff;
+        }
+
+        .edit-btn {
+            background-color: green;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .edit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .delete-btn {
+            background-color: red;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: darkred;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 8% auto;
+            padding: 20px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+
+        .modal-content input, .modal-content select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div style="margin-top: 50px; margin-left: -50px; width:1460px; height: auto; border-radius: 20px; padding: 20px;">
+        <h2>Listado de Planes de Formación</h2>
+
+        <!-- Filtro de búsqueda -->
+        <div style="margin: 20px 0; display: flex; gap: 10px;">
+            <input type="text" id="buscador" placeholder="Buscar..." style="flex: 2; padding: 10px; border-radius: 6px; border: 1px solid #ccc;">
+            <select id="filtroCampo" style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #ccc;">
+                <option value="0">Nombre del Plan</option>
+                <option value="1">Área</option>
+                <option value="2">Responsable</option>
+                <option value="3">Estado</option>
+                <option value="4">Fecha</option>
+            </select>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre del Plan</th>
+                    <th>Área</th>
+                    <th>Responsable</th>
+                    <th>Estado</th>
+                    <th>Fecha de Inicio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-planes">
+                <tr>
+                    <td>Plan Básico de Inducción</td>
+                    <td>Recursos Humanos</td>
+                    <td>Ana Pérez</td>
+                    <td>En ejecución</td>
+                    <td>2024-03-15</td>
+                    <td>
+                        <button class="edit-btn" onclick="editarFila(this)">Editar</button>
+                        <button class="delete-btn" onclick="eliminarFila(this)">Eliminar</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Liderazgo para Jefes</td>
+                    <td>Dirección General</td>
+                    <td>Luis Mendoza</td>
+                    <td>Finalizado</td>
+                    <td>2023-11-10</td>
+                    <td>
+                        <button class="edit-btn" onclick="editarFila(this)">Editar</button>
+                        <button class="delete-btn" onclick="eliminarFila(this)">Eliminar</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Capacitación Técnica</td>
+                    <td>Producción</td>
+                    <td>Laura Gómez</td>
+                    <td>En planificación</td>
+                    <td>2024-07-01</td>
+                    <td>
+                        <button class="edit-btn" onclick="editarFila(this)">Editar</button>
+                        <button class="delete-btn" onclick="eliminarFila(this)">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 style="margin-top: 40px;">Agregar Nuevo Plan</h3>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <input type="text" id="nuevoNombrePlan" placeholder="Nombre del Plan" style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #ccc;">
+            <input type="text" id="nuevoArea" placeholder="Área" style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #ccc;">
+            <input type="text" id="nuevoResponsable" placeholder="Responsable" style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #ccc;">
+            <select id="nuevoEstado" style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #ccc;">
+                <option value="En ejecución">En ejecución</option>
+                <option value="Finalizado">Finalizado</option>
+                <option value="En planificación">En planificación</option>
+            </select>
+            <input type="date" id="nuevaFecha" style="flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #ccc;">
+            <button onclick="agregarNuevoPlan()",type = submit, class="edit-btn" style="padding: 10px 20px;">Agregar</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <h3>Editar Plan de Formación</h3>
+            <input type="text" id="nombrePlan">
+            <input type="text" id="area">
+            <input type="text" id="responsable">
+            <select id="estado">
+                <option>En ejecución</option>
+                <option>Finalizado</option>
+                <option>En planificación</option>
+            </select>
+            <input type="date" id="fechaInicio">
+            <button class="edit-btn" onclick="guardarCambios()">Guardar</button>
+        </div>
+    </div>
+
+    <script>
+        let filaActual = null;
+
+        function editarFila(boton) {
+            filaActual = boton.closest("tr");
+            const celdas = filaActual.querySelectorAll("td");
+            document.getElementById("nombrePlan").value = celdas[0].innerText;
+            document.getElementById("area").value = celdas[1].innerText;
+            document.getElementById("responsable").value = celdas[2].innerText;
+            document.getElementById("estado").value = celdas[3].innerText;
+            document.getElementById("fechaInicio").value = celdas[4].innerText;
+            document.getElementById("modal").style.display = "block";
+        }
+
+        function cerrarModal() {
+            document.getElementById("modal").style.display = "none";
+        }
+
+        function guardarCambios() {
+            if (!filaActual) return;
+            const celdas = filaActual.querySelectorAll("td");
+            celdas[0].innerText = document.getElementById("nombrePlan").value;
+            celdas[1].innerText = document.getElementById("area").value;
+            celdas[2].innerText = document.getElementById("responsable").value;
+            celdas[3].innerText = document.getElementById("estado").value;
+            celdas[4].innerText = document.getElementById("fechaInicio").value;
+            cerrarModal();
+        }
+
+        function agregarNuevoPlan() {
+            const nombre = document.getElementById("nuevoNombrePlan").value.trim();
+            const area = document.getElementById("nuevoArea").value.trim();
+            const responsable = document.getElementById("nuevoResponsable").value.trim();
+            const estado = document.getElementById("nuevoEstado").value;
+            const fecha = document.getElementById("nuevaFecha").value;
+
+            if (!nombre || !area || !responsable || !fecha) {
+                alert("Por favor, completa todos los campos.");
+                return;
+            }
+
+            const nuevaFila = document.createElement("tr");
+            nuevaFila.innerHTML = `
+                <td>${nombre}</td>
+                <td>${area}</td>
+                <td>${responsable}</td>
+                <td>${estado}</td>
+                <td>${fecha}</td>
+                <td>
+                    <button class="edit-btn" onclick="editarFila(this)">Editar</button>
+                    <button class="delete-btn" onclick="eliminarFila(this)">Eliminar</button>
+                </td>
+            `;
+
+            document.getElementById("tabla-planes").appendChild(nuevaFila);
+
+            document.getElementById("nuevoNombrePlan").value = "";
+            document.getElementById("nuevoArea").value = "";
+            document.getElementById("nuevoResponsable").value = "";
+            document.getElementById("nuevoEstado").value = "En ejecución";
+            document.getElementById("nuevaFecha").value = "";
+        }
+
+        function eliminarFila(boton) {
+            const fila = boton.closest("tr");
+            fila.remove();
+        }
+
+        // Filtrado en tiempo real
+        document.getElementById("buscador").addEventListener("input", function () {
+            const input = this.value.toLowerCase();
+            const campoSeleccionado = parseInt(document.getElementById("filtroCampo").value);
+            const filas = document.querySelectorAll("#tabla-planes tr");
+
+            filas.forEach(fila => {
+                const celda = fila.querySelectorAll("td")[campoSeleccionado];
+                if (celda && celda.textContent.toLowerCase().includes(input)) {
+                    fila.style.display = "";
+                } else {
+                    fila.style.display = "none";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

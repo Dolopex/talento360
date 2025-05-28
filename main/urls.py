@@ -37,5 +37,14 @@ urlpatterns = [
     path('solicitudes/', views.solicitudes, name='solicitudes'),
     path('calendario/', views.calendario, name='calendario'),
     path('ejemplo/', views.ejemplo, name='ejemplo'),
+    path('capacitacion/ges_formacion/', views.ges_formacion, name='ges_formacion'),
+    path('planes_formacion/', views.vista_planes_formacion, name="planes_formacion"),
+    path('capacitacion/inscripciones/', views.inscripciones, name='inscripciones'),
+    path('obtener_empleados/', views.obtener_sugerencias_empleados, name='obtener_empleados'),
+    path('capacitacion/registro_cer/', views.registro_cer, name='registro_cer'),
+    path('seguridad/ges_usuario/', views.ges_usuario, name='ges_usuario'),
+    path('seguridad/control_acceso/', views.control_acceso, name='control_acceso'),
+
+    
 
 ]

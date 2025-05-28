@@ -1,0 +1,291 @@
+{% extends "dashboard/header.html" %}
+
+{% load static %}
+
+{% block title %} Perfil del usuario {% endblock %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Control de Acceso</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #eef1f5;
+      margin: 0;
+      padding: 30px;
+    }
+
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    .section {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      color: #34495e;
+      margin-bottom: 15px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    select, input[type="text"], button {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #2980b9;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #1c5980;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th {
+      background-color: #2c3e50;
+      color: white;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .audit-table {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    /* Asegurando que las secciones estén alineadas horizontalmente */
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 30px;
+    }
+
+    .half-width {
+      flex: 1;
+      min-width: 45%;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔐 Panel de Control de Acceso</h1>
+
+  <!-- Punto 2: Tabla de roles y permisos -->
+  <div class="section">
+    <h2>🗂️ Roles y Permisos</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Rol</th>
+          <th>Módulos Accesibles</th>
+          <th>Permisos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Empleado</td>
+          <td>Perfil, Cursos</td>
+          <td>Ver</td>
+        </tr>
+        <tr>
+          <td>Jefe de Área</td>
+          <td>Empleados, Nómina, Asistencia</td>
+          <td>Ver, Editar</td>
+        </tr>
+        <!-- Nuevos roles -->
+        <tr>
+            <td>Administrativo</td>
+            <td>Administración General</td>
+            <td>Ver, Editar</td>
+        </tr>
+        <tr>
+            <td>Contador</td>
+            <td>Nómina, Reportes Financieros</td>
+            <td>Ver, Editar</td>
+        </tr>
+        <tr>
+            <td>Recursos Humanos</td>
+            <td>Empleados, Asistencia, Evaluaciones</td>
+            <td>Ver, Editar</td>
+        </tr>
+        <tr>
+          <td>Administrador</td>
+          <td>Todos los módulos</td>
+          <td>Ver, Editar, Eliminar</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Contenedor para alinear ambas secciones horizontalmente -->
+  <div class="row">
+
+    <!-- Sección: Asignar Rol a Usuario -->
+    <div class="half-width section">
+      <h2>👤 Asignar Rol a Usuario</h2>
+      <form>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" placeholder="Ej: Juan">
+          </div>
+          <div class="form-group">
+            <label for="apellido">Apellido</label>
+            <input type="text" id="apellido" placeholder="Ej: Pérez">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="usuario">Correo del Usuario</label>
+            <select id="usuario">
+              <option value="">-- Selecciona un usuario --</option>
+              <option value="usuario1">usuario1@example.com</option>
+              <option value="usuario2">usuario2@example.com</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="rol">Asignar Rol</label>
+            <select id="rol">
+              <option value="">-- Selecciona un rol --</option>
+              <option value="empleado">Empleado</option>
+              <option value="jefe">Jefe de Área</option>
+              <option value="admin">Administrador</option>
+              <option value="administrativo">Administrativo</option>
+              <option value="contador">Contador</option>
+              <option value="rrhh">Recursos Humanos</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit">Asignar Rol</button>
+      </form>
+    </div>
+
+    <!-- Sección: Permisos Personalizados por Usuario -->
+    <div class="half-width section">
+      <h2>⚙️ Permisos Personalizados por Usuario</h2>
+      <form>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="permiso-usuario">Seleccionar Usuario</label>
+            <select id="permiso-usuario">
+              <option value="">-- Selecciona un usuario --</option>
+              <option value="usuario1">usuario1@example.com</option>
+              <option value="usuario2">usuario2@example.com</option>
+            </select>
+          </div>
+        </div>
+
+        <label>Módulos Permitidos</label>
+        <div class="checkbox-group">
+          <label><input type="checkbox" value="empleados"> Empleados</label>
+          <label><input type="checkbox" value="nomina"> Nómina</label>
+          <label><input type="checkbox" value="asistencia"> Asistencia</label>
+          <label><input type="checkbox" value="evaluacion"> Evaluación</label>
+          <label><input type="checkbox" value="cursos"> Cursos</label>
+          <label><input type="checkbox" value="comunicacion"> Comunicación</label>
+        </div>
+
+        <button type="submit">Guardar Permisos</button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Punto 5: Registro de actividad -->
+  <div class="section">
+    <h2>📜 Registro de Actividad</h2>
+    <div class="audit-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Acción</th>
+            <th>Fecha y Hora</th>
+            <th>IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>usuario1@example.com</td>
+            <td>Inicio de sesión</td>
+            <td>2025-05-27 09:12</td>
+            <td>192.168.1.10</td>
+          </tr>
+          <tr>
+            <td>admin@example.com</td>
+            <td>Modificó permisos</td>
+            <td>2025-05-27 09:20</td>
+            <td>192.168.1.1</td>
+          </tr>
+          <tr>
+            <td>jefe@example.com</td>
+            <td>Registró nuevo empleado</td>
+            <td>2025-05-27 10:05</td>
+            <td>192.168.1.22</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</body>
+</html>
+
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, User
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import json
 
 class UsuarioManager(BaseUserManager):
@@ -157,6 +157,9 @@ class Permiso(models.Model):
     def __str__(self):
         return f"Permiso de {self.empleado.nombres} {self.empleado.apellidos}"
     
-
-
-
+class PlanFormacion(models.Model):
+    nombre_plan = models.CharField(max_length=255)
+    area = models.CharField(max_length=255)
+    responsable = models.CharField(max_length=255)
+    estado = models.CharField(max_length=100)
+    fecha_inicio = models.DateField()

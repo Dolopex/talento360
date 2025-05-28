@@ -1,0 +1,111 @@
+{% extends "dashboard/header.html" %}
+
+{% load static %}
+
+{% block title %} Perfil del usuario {% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Función para obtener las sugerencias de empleados desde la base de datos
+        function obtenerSugerenciasEmpleados() {
+            const nombreInput = document.getElementById("nombre");
+            const term = nombreInput.value;
+            if (term.length >= 3) {  // Solo buscar cuando el término tiene al menos 3 caracteres
+                fetch('/obtener_empleados/?term=' + term)  // Realizamos la solicitud al endpoint
+                    .then(response => response.json())  // Parseamos la respuesta JSON
+                    .then(data => {
+                        const datalist = document.getElementById('sugerencias');
+                        datalist.innerHTML = '';  // Limpiamos las sugerencias anteriores
+
+                        data.forEach(suggestion => {
+                            const option = document.createElement('option');
+                            option.value = suggestion;
+                            datalist.appendChild(option);  // Añadimos la nueva sugerencia al datalist
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error al obtener los empleados:', error);
+                    });
+            }
+        }
+    </script>
+</head>
+<body>
+    <div style="margin: 0; padding: 0; box-sizing: border-box;">
+        <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; display: flex; justify-content: center; align-items: flex-start; height: 100vh; text-align: center; padding-top: 100px;">
+            <div style="display: flex; justify-content: space-between; width: 80%; gap: 20px;">
+                <!-- Sección de Cursos -->
+                <section style="background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); width: 48%;">
+                    <h2 style="color: #333; margin-bottom: 20px;">Cursos o Talleres Disponibles</h2>
+                    <ul style="list-style-type: none; padding-left: 0;">
+                        <li style="margin-bottom: 25px; padding: 15px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                            <h3 style="color: #333;">Curso de JavaScript Básico</h3>
+                            <p style="color: #555;">Aprende los fundamentos de JavaScript, ideal para principiantes.</p>
+                            <p><strong>Duración:</strong> 4 semanas</p>
+                            <p><strong>Modalidad:</strong> Virtual</p>
+                            <p><strong>Fecha de Inicio:</strong> 01/06/2025</p>
+                        </li>
+                        <li style="margin-bottom: 25px; padding: 15px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                            <h3 style="color: #333;">Curso de Python Intermedio</h3>
+                            <p style="color: #555;">Profundiza en Python, con proyectos prácticos y técnicas avanzadas.</p>
+                            <p><strong>Duración:</strong> 6 semanas</p>
+                            <p><strong>Modalidad:</strong> Presencial</p>
+                            <p><strong>Fecha de Inicio:</strong> 05/06/2025</p>
+                        </li>
+                        <li style="margin-bottom: 25px; padding: 15px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                            <h3 style="color: #333;">Taller de Desarrollo Web con React</h3>
+                            <p style="color: #555;">Curso intensivo para aprender a desarrollar aplicaciones web con React.</p>
+                            <p><strong>Duración:</strong> 3 semanas</p>
+                            <p><strong>Modalidad:</strong> Virtual</p>
+                            <p><strong>Fecha de Inicio:</strong> 10/06/2025</p>
+                        </li>
+                        <li style="margin-bottom: 25px; padding: 15px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                            <h3 style="color: #333;">Taller de Diseño UX/UI</h3>
+                            <p style="color: #555;">Aprende las mejores prácticas para diseñar experiencias de usuario excepcionales.</p>
+                            <p><strong>Duración:</strong> 2 semanas</p>
+                            <p><strong>Modalidad:</strong> Presencial</p>
+                            <p><strong>Fecha de Inicio:</strong> 15/06/2025</p>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Sección de Inscripción -->
+                <section style="background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); width: 48%; flex-shrink: 0;">
+                    <h2 style="color: #333; margin-bottom: 20px;">Formulario de Inscripción</h2>
+                    <form id="formulario-inscripcion">
+                        <label for="nombre" style="display: block; margin: 10px 0 5px;">Nombre Completo:</label>
+                        <input type="text" id="nombre" name="nombre" required style="width: 540px; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;" autocomplete="off" oninput="obtenerSugerenciasEmpleados()">
+                        <datalist id="sugerencias"></datalist>  <!-- Datalist para mostrar las sugerencias -->
+
+                        <label for="curso" style="display: block; margin: 10px 0 5px;">Seleccionar Curso:</label>
+                        <select id="curso" name="curso" required style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;">
+                            <option value="curso1">Curso de JavaScript Básico</option>
+                            <option value="curso2">Curso de Python Intermedio</option>
+                        </select>
+
+                        <label for="fechas" style="display: block; margin: 10px 0 5px;">Seleccionar Fecha:</label>
+                        <select id="fechas" name="fechas" required style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;">
+                            <option value="01/06/2025 10:00 AM">01/06/2025 10:00 AM</option>
+                            <option value="05/06/2025 2:00 PM">05/06/2025 2:00 PM</option>
+                        </select>
+
+                        <div class="confirmacion" style="margin-bottom: 20px;">
+                            <p>¿Está seguro de su inscripción?</p>
+                            <input type="checkbox" id="confirmacion" name="confirmacion" required style="margin-right: 10px;">
+                            <label for="confirmacion" style="margin-left: 5px;">Confirmar Inscripción</label>
+                        </div>
+
+                        <button type="submit" style="width: 100%; padding: 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 4px;">Enviar Inscripción</button>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock %}
